@@ -1,3 +1,4 @@
+/* Fluxury - Copyright 2015 Peter W Moresi */
 import {EventEmitter} from 'fbemitter';
 import {Dispatcher} from 'flux';
 var dispatcher = new Dispatcher();
