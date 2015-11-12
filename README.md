@@ -26,8 +26,9 @@ This new "Flux framework" adds a surface area of 3 functions.
 
     Create your actions from a list of strings as `arguments`.
 
+    _MyActions.js_
     ```js
-    Fluxury.createActions('INC', 'DEC', 'SET')
+    export default Fluxury.createActions('INC', 'DEC', 'SET')
     ```
 
     This returns a key mirrored object.
