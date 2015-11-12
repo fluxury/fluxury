@@ -12,10 +12,10 @@ This new "Flux framework" is a sparse 3 functions and 46 lines of commented ES6 
 
   1. Fluxory.createActions(action1, action2, ..., actionN) : Object&lt;String, Function&gt;
 
-    Create your actions from an array of strings.
+    Create your actions from a list of strings as `arguments`.
 
     ```js
-    export default Fluxury.createActions('INC')
+    export default Fluxury.createActions('INC', 'DEC')
     ```
 
     This returns a object with methods that call the dispatcher along with optional data that is associated with the action.
