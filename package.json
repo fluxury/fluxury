@@ -5,7 +5,6 @@
   "main": "./lib/index.js",
   "jsnext:main": "index.js",
   "scripts": {
-    "build": "babel "
     "test": "node test"
   },
   "author": "Peter Moresi",
