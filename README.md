@@ -136,3 +136,7 @@ Fluxury.dispatch(SET, { states: ['CA', 'OR', 'WA'] })
 Fluxury.dispatch(SET, { selectedState: 'CA' })
 // store.getState() => { states: ['CA', 'OR', 'WA'], selectedState: 'CA' }
 ```
+
+## App Example
+
+[CSV File Viewer](https://github.com/petermoresi/react-csv-file-viewer)
