@@ -22,7 +22,7 @@ This new "Flux framework" adds a surface area of 3 functions.
     Fluxury.dispatch('LOAD_SETTINGS', { a: 1, b: 2 })
     ```
 
-  2. Fluxory.createActions(action1, action2, ..., actionN)
+  2. Fluxury.createActions(action1, action2, ..., actionN)
 
     Create your actions from a list of strings as `arguments`.
 
@@ -75,7 +75,7 @@ This new "Flux framework" adds a surface area of 3 functions.
 
     ```js
     import {INC} from './MyActions'
-    export default Fluxor.createStore('CountStore', 0, function(state, action) {
+    export default Fluxury.createStore('CountStore', 0, function(state, action) {
       if (action.type === INC) {
         return state + 1;
       }
