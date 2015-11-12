@@ -12,25 +12,35 @@ This new "Flux framework" adds a surface area of 3 functions.
 
 ## API
 
-  1. Fluxory.createActions(action1, action2, ..., actionN)
+  1. Fluxury.dispatch( type, data )
+
+    Submit an action into the stores. You must specify the type and, optionally, some data.
+
+    ```js
+    Fluxury.dispatch('REQUEST_SETTINGS')
+    // or with data
+    Fluxury.dispatch('LOAD_SETTINGS', { a: 1, b: 2 })
+    ```
+
+  2. Fluxory.createActions(action1, action2, ..., actionN)
 
     Create your actions from a list of strings as `arguments`.
 
     ```js
-    export default Fluxury.createActions('INC', 'DEC', 'SET')
+    Fluxury.createActions('INC', 'DEC', 'SET')
     ```
 
-    This translates to a key mirrored object.
+    This returns a key mirrored object.
 
     ```js
-    var actions = {
+    {
       INC: 'INC',
       DEC: 'DEC',
       SET: 'SET'
     }
     ```
 
-    To use your action in a React component:
+    To use the action in a React component:
 
     ```js
     import {INC} from './MyActions'
@@ -58,7 +68,7 @@ This new "Flux framework" adds a surface area of 3 functions.
 
     ```
 
-  2. Fluxury.createStore(name, initialState, reducer)
+  3. Fluxury.createStore(name, initialState, reducer)
 
     Create a new store with a name and a reducer.
 
@@ -96,7 +106,6 @@ This new "Flux framework" adds a surface area of 3 functions.
 
     As previously discovered by many the reducer pattern remains a powerful tool.
 
-  3. Fluxury.dispatch( type, data )
 
 
 ## MapStore Example
