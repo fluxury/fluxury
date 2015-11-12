@@ -4,7 +4,9 @@ Add sugar to Facebook's implementation of Flux architecture. It adds a little lu
 
 This library is similar to Reflux and Redux except that this library doesn't try to replace the dispatcher with a new implementation. The library encourages you into simple patterns but doesn't try to change the core concepts.
 
-This library is an opinionated set of functions that allow you to create actions, stores and web utils.
+This library is an opinionated set of functions that allow you to easily actions and stores; and a pattern on how to submit these actions to the dispatcher.
+
+This new "Flux framework" is a sparse 3 functions and 46 lines of commented ES6 code. Enjoy!
 
 ## API
 
@@ -137,7 +139,3 @@ var MyComponent = React.createClass({
 module.exports = MyComponent;
 
 ```
-
-That's it. This new Flux framework is a sparse 3 functions and 46 lines of commented code.
-
-Enjoy!

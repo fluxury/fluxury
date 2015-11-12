@@ -1,9 +1,11 @@
 {
   "name": "fluxury",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Add luxury sugar to simplify implementing Facebook's flavor of Flux architecture.",
-  "main": "index.js",
+  "main": "./lib/index.js",
+  "jsnext:main": "index.js",
   "scripts": {
+    "build": "babel "
     "test": "node test"
   },
   "author": "Peter Moresi",
