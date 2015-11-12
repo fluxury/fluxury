@@ -6,12 +6,12 @@ var changedEvent = 'change';
 export default Object.freeze({
 
   /* thin bridge to internal dispatcher */
-  dispatch: function(action) {
-    dispatcher.dispatch(action)
+  dispatch: function(type, data) {
+    dispatcher.dispatch({ type: type, data: data })
   },
 
   /* transform a list of actions into useful functions */
-  createActions: function(actions) {
+  createActions: function(...actions) {
     return actions.reduce(function(a,b) {
       a[b] = b;
       return a;
