@@ -29,7 +29,6 @@ export default Object.freeze({
   createStore: function(name, initialState, reducer, waitFor=[]) {
     var currentState = initialState;
     var emitter = new EventEmitter();
-    var subscription;
 
     var dispatchToken = dispatcher.register( function(action) {
       dispatcher.waitFor(waitFor);
