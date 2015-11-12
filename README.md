@@ -64,7 +64,7 @@ This new "Flux framework" adds a surface area of 3 functions.
 
     ```js
     import {INC} from './MyActions'
-    export default Fluxor.createStore('CountStore', 0, (state, action) => {
+    export default Fluxor.createStore('CountStore', 0, function(state, action) {
       if (action.type === INC) {
         return state + 1;
       }
@@ -89,7 +89,7 @@ This new "Flux framework" adds a surface area of 3 functions.
 
     ```js
     import {INC} from './MyActions'
-    export default Fluxury.createStore('CountStore', 0, (state, action) => {
+    export default Fluxury.createStore('CountStore', 0, function(state, action) {
         return state + (action.type === INC ? 1 : 0);
     })
     ```
