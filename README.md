@@ -1,5 +1,7 @@
 # fluxury
 
+[![Circle CI](https://circleci.com/gh/fluxury/fluxury/tree/master.svg?style=svg)](https://circleci.com/gh/fluxury/fluxury/tree/master)
+
 Add sugar to Facebook's implementation of Flux architecture. It adds a little luxury to simplify your life.
 
 This library is similar to Reflux and Redux except that this library doesn't try to replace the dispatcher with a new implementation. The library encourages you into simple patterns but doesn't try to change the core concepts.
