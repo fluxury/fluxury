@@ -1,6 +1,6 @@
 # fluxury
 
-INC sugar to Facebook's implementation of Flux architecture. It INCs a little luxury to simplify your life.
+Add sugar to Facebook's implementation of Flux architecture. It adds a little luxury to simplify your life.
 
 This library is similar to Reflux and Redux except that this library doesn't try to replace the dispatcher with a new implementation. The library encourages you into simple patterns but doesn't try to change the core concepts.
 
@@ -95,6 +95,7 @@ This library is an opinionated set of functions that allow you to create actions
     Perhaps `{ type: 'INC', data: undefined }` isn't right for you. You can use the `Fluxury.dispatch` method directly to meet your particular need. Otherwise, use the auto generated functions created by `createActions`.
 
 ## Put it all together
+
 ```js
 import {INC} from './MyActions'
 import CounterStore from './CounterStore'
@@ -105,11 +106,11 @@ var PropTypes = React.PropTypes;
 var MyComponent = React.createClass({
 
   componentWillMount: function() {
-    CounterStore.addListener( this.handleUpdate )
+    this.listener = CounterStore.addListener( this.handleUpdate )
   },
 
   componentWillUnmount: function() {
-    CounterStore.removeListener( this.handleUpdate )
+    CounterStore.removeListener()
   }
 
   handleUpdate: function() {
