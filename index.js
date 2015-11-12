@@ -8,7 +8,13 @@ export default Object.freeze({
 
   /* thin bridge to internal dispatcher */
   dispatch: function(type, data) {
-    dispatcher.dispatch({ type: type, data: data })
+    if (typeof type === 'string') {
+      dispatcher.dispatch({ type: type, data: data })
+    } else if (typeof type === 'object') {
+      dispatcher.dispatch(type)
+    } else {
+      throw "type must be string or object"
+    }
   },
 
   /* transform a list of actions into useful functions */
