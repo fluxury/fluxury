@@ -6,7 +6,7 @@ Add sugar to Facebook's implementation of Flux architecture. It adds a little lu
 
 This library is similar to Reflux and Redux except that this library doesn't try to replace the dispatcher with a new implementation. The library encourages you into simple patterns but doesn't try to change the core concepts.
 
-This library is an opinionated set of functions that allow you to easily define actions and stores; and singleton dispatcher to publish actions to the stores.
+This library is an opinionated set of functions that allow you to easily define actions and stores; and dispatch actions to these stores.
 
 This new "Flux framework" adds a surface area of 3 functions.
 
