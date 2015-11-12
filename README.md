@@ -8,7 +8,7 @@ This library is similar to Reflux and Redux except that this library doesn't try
 
 This library is an opinionated set of functions that allow you to easily actions and stores; and a pattern on how to submit these actions to the dispatcher.
 
-This new "Flux framework" is a sparse 3 functions and 46 lines of commented ES6 code. Enjoy!
+This new "Flux framework" adds a surface area of 3 functions.
 
 ## API
 
@@ -17,16 +17,16 @@ This new "Flux framework" is a sparse 3 functions and 46 lines of commented ES6 
     Create your actions from a list of strings as `arguments`.
 
     ```js
-    export default Fluxury.createActions('INC', 'DEC')
+    export default Fluxury.createActions('INC', 'DEC', 'SET')
     ```
 
-    This returns a object with methods that call the dispatcher along with optional data that is associated with the action.
+    This translates to a key mirrored object.
 
     ```js
     var actions = {
-      'INC': function INC(data) {
-        return Fluxury.dispatch('INC', data);
-      },
+      INC: 'INC',
+      DEC: 'DEC',
+      SET: 'SET'
     }
     ```
 
@@ -96,48 +96,32 @@ This new "Flux framework" is a sparse 3 functions and 46 lines of commented ES6 
 
     As previously discovered by many the reducer pattern remains a powerful tool.
 
-  3. Fluxury.dispatch( action )
+  3. Fluxury.dispatch( type, data )
 
-    Perhaps `{ type: 'INC', data: undefined }` isn't right for you. You can use the `Fluxury.dispatch` method directly to meet your particular need. Otherwise, use the auto generated functions created by `createActions`.
 
-## Put it all together
+
+## MapStore Example
 
 ```js
-import {INC} from './MyActions'
-import CounterStore from './CounterStore'
-
+var Fluxury = require('fluxury');
 var React = require('react');
 var PropTypes = React.PropTypes;
 
-var MyComponent = React.createClass({
+// no need for Fluxury.createActions when you have a single action!
+var SET = 'SET';
 
-  componentWillMount: function() {
-    this.subscription = CounterStore.addListener( this.handleUpdate )
-  },
-
-  componentWillUnmount: function() {
-    this.subscription.remove();
+var store = Fluxury.createStore('MapStore', {}, function(state, action) {
+  switch (action.type) {
+    case SET:
+      return Object.assign(state, action.data)
+    default:
+      return state;
   }
-
-  handleUpdate: function() {
-    this.setState({ count: CounterStore.getState() })
-  }
-
-  handleClick: function() {
-    INC()
-  }
-
-  render: function() {
-    return (
-      <div>
-        <p>{this.state.count}</p>
-        <button onClick={this.handleClick}>+1</button>
-      </div>
-    );
-  }
-
 });
 
-module.exports = MyComponent;
+Fluxury.dispatch(SET, { foo: 1, bar: 2 })
+// store.getState() => { foo: 1, bar: 2 }
 
+Fluxury.dispatch(SET, { foo: 2 })
+// store.getState() => { foo: 2, bar: 2 }
 ```
