@@ -1,0 +1,15 @@
+{
+  "name": "fluxury",
+  "version": "0.0.1",
+  "description": "Add luxury sugar to simplify implementing Facebook's flavor of Flux architecture.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "author": "Peter Moresi",
+  "license": "MIT",
+  "dependencies": {
+    "fbemitter": "^2.0.0",
+    "flux": "^2.1.1"
+  }
+}
