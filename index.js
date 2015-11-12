@@ -35,13 +35,8 @@ export default function Fluxury(config) {
         name: name,
         dispatchToken: dispatchToken,
         addListener: function(cb) {
-          subscription = emitter.addListener(changedEvent, cb)
+          return emitter.addListener(changedEvent, cb)
         },
-        removeListener: function() {
-          if (subscription) {
-            subscription.remove();
-          }
-        }
         getState: function(cb) {
           return currentState;
         }
