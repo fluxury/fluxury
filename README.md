@@ -96,7 +96,6 @@ This new "Flux framework" adds a surface area of 3 functions.
 
     As previously discovered by many the reducer pattern remains a powerful tool.
 
-  3. Fluxury.createMapStore( )
   3. Fluxury.dispatch( type, data )
 
 

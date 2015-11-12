@@ -3,11 +3,8 @@ import {EventEmitter} from 'fbemitter';
 import {Dispatcher} from 'flux';
 var dispatcher = new Dispatcher();
 var changedEvent = 'change';
-var SET = 'SET';
 
 export default Object.freeze({
-
-  SET,
 
   /* thin bridge to internal dispatcher */
   dispatch: function(type, data) {
