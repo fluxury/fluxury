@@ -96,11 +96,15 @@ This new "Flux framework" adds a surface area of 3 functions.
 
     As previously discovered by many the reducer pattern remains a powerful tool.
 
+  3. Fluxury.createMapStore( )
   3. Fluxury.dispatch( type, data )
 
 
-
 ## MapStore Example
+
+For simple projects with limited datasets you may be best suited to use a
+single store for the entire application. After all, you can nest the object as
+deeply as needed to organize and isolate your data.
 
 ```js
 var Fluxury = require('fluxury');
@@ -117,9 +121,9 @@ var store = Fluxury.createStore('MapStore', {}, function(state, action) {
   }
 });
 
-Fluxury.dispatch(SET, { states: [{ code: 'CA'}] })
-// store.getState() => { states: [{ code: 'CA'}] }
+Fluxury.dispatch(SET, { states: ['CA', 'OR', 'WA'] })
+// store.getState() => { states: ['CA', 'OR', 'WA']  }
 
-Fluxury.dispatch(SET, { foo: 2 })
-// store.getState() => { foo: 2, bar: 2 }
+Fluxury.dispatch(SET, { selectedState: 'CA' })
+// store.getState() => { states: ['CA', 'OR', 'WA'], selectedState: 'CA' }
 ```
