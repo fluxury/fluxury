@@ -32,12 +32,14 @@ This library is an opinionated set of functions that allow you to create actions
     import {INC} from './MyActions'
 
     var React = require('react');
+    var Fluxury = require('fluxury');
     var PropTypes = React.PropTypes;
 
     var MyComponent = React.createClass({
 
       handleClick: function() {
-        INC()
+        /* Call dispatch to submit the action to the stores */
+        Fluxury.dispatch(INC)
       }
 
       render: function() {
