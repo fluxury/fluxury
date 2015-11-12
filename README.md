@@ -106,11 +106,11 @@ var PropTypes = React.PropTypes;
 var MyComponent = React.createClass({
 
   componentWillMount: function() {
-    this.listener = CounterStore.addListener( this.handleUpdate )
+    this.subscription = CounterStore.addListener( this.handleUpdate )
   },
 
   componentWillUnmount: function() {
-    CounterStore.removeListener()
+    this.subscription.remove();
   }
 
   handleUpdate: function() {
