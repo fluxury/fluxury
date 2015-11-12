@@ -104,8 +104,6 @@ This new "Flux framework" adds a surface area of 3 functions.
 
 ```js
 var Fluxury = require('fluxury');
-var React = require('react');
-var PropTypes = React.PropTypes;
 
 // no need for Fluxury.createActions when you have a single action!
 var SET = 'SET';
@@ -119,8 +117,8 @@ var store = Fluxury.createStore('MapStore', {}, function(state, action) {
   }
 });
 
-Fluxury.dispatch(SET, { foo: 1, bar: 2 })
-// store.getState() => { foo: 1, bar: 2 }
+Fluxury.dispatch(SET, { states: [{ code: 'CA'}] })
+// store.getState() => { states: [{ code: 'CA'}] }
 
 Fluxury.dispatch(SET, { foo: 2 })
 // store.getState() => { foo: 2, bar: 2 }
