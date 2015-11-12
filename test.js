@@ -21,9 +21,10 @@ test( 'fluxury', function(t) {
   } )
 
   var store = Fluxury.createStore('MyStore', {}, function(state, action) {
+    var assign = require('object-assign');
     switch (action.type) {
       case SET:
-        return Object.assign(state, action.data)
+        return assign(state, action.data)
       default:
         return state;
     }
