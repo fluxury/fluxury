@@ -12,7 +12,7 @@ This new "Flux framework" adds a surface area of 3 functions.
 
 ## API
 
-  1. Fluxory.createActions(action1, action2, ..., actionN) : Object&lt;String, Function&gt;
+  1. Fluxory.createActions(action1, action2, ..., actionN)
 
     Create your actions from a list of strings as `arguments`.
 
