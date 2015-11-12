@@ -2,7 +2,8 @@ var test = require('tape');
 
 test( 'fluxury', function(t) {
   var Fluxury = require('./lib/index.js')
-  t.plan(12)
+  t.plan(13)
+
   t.equal(typeof Fluxury, 'object')
   t.equal(typeof Fluxury.createActions, 'function')
   t.equal(typeof Fluxury.createStore, 'function')
@@ -11,7 +12,7 @@ test( 'fluxury', function(t) {
 
   var actions = Fluxury.createActions('INC', 'DEC', 'SET'),
   INC = actions.INC,
-  DEC = actions.DECs,
+  DEC = actions.DEC,
   SET = actions.SET;
 
   t.deepEqual( actions, {
@@ -20,9 +21,9 @@ test( 'fluxury', function(t) {
     SET: 'SET'
   } )
 
-  var store = Fluxury.createStore('MyStore', {}, function(state, action) {
+  var store = Fluxury.createStore('MapStore', {}, function(state, action) {
     var assign = require('object-assign');
-    switch (action.type) {
+      switch (action.type) {
       case SET:
         return assign(state, action.data)
       default:
@@ -54,6 +55,9 @@ test( 'fluxury', function(t) {
 
   Fluxury.dispatch(DEC)
   t.equal(store.getState(), 1)
+
+  Fluxury.dispatch(DEC)
+  t.equal(store.getState(), 0)
 
   t.deepEqual( Object.keys(store), ['name', 'dispatchToken', 'addListener', 'getState'] );
 })
