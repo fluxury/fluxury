@@ -79,7 +79,7 @@ Pull requests welcome. Enjoy!
       handleClick: function() {
         /* Call dispatch to submit the action to the stores */
         dispatch(INC)
-      }
+      },
 
       render: function() {
         return (
