@@ -224,19 +224,23 @@ var store = createStore('MapStore', {}, function(state, action) {
       return state;
   }
 }, {
-  getState: (state) => state.states,
+  getStates: (state) => state.states,
   getPrograms: (state) => state.programs,
   getSelectedState: (state) => state.selectedState
 });
 
 dispatch(SET, { states: ['CA', 'OR', 'WA'] })
-// store.getState() => { states: ['CA', 'OR', 'WA']  }
+// store.queries.getStates() => { states: ['CA', 'OR', 'WA']  }
 
 dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
-// store.getState() => { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] }
+// store.queries.getStates() => { states: ['CA', 'OR', 'WA']] }
+// store.queries.getPrograms() => { programs: [{ name: 'A', states: ['CA']}] }
 
 dispatch(SET, { selectedState: 'CA' })
+// store.queries.getSelectedState() => 'CA'
+
 // store.getState() => { states: ['CA', 'OR', 'WA'], { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] }, selectedState: 'CA' }
+
 ```
 
 ## Example Applications
