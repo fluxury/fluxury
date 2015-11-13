@@ -56,8 +56,8 @@ export default Object.freeze({
       },
       queries: Object.freeze(Object.keys(queries).reduce(function(a, b, i) {
         var newFunc = {};
-        newFunc[b] = function() {
-          return queries[b](currentState);
+        newFunc[b] = function(params) {
+          return queries[b](currentState, params);
         }
         return Object.assign({}, a, newFunc)
       }, {})),
