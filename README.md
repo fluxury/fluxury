@@ -140,7 +140,7 @@ var store = Fluxury.createStore('MapStore', {}, function(state, action) {
 Fluxury.dispatch(SET, { states: ['CA', 'OR', 'WA'] })
 // store.getState() => { states: ['CA', 'OR', 'WA']  }
 
-Fluxury.dispatch(SET, { programs: [{ name: 'A', state: ['CA']}] })
+Fluxury.dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
 // store.getState() => { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] }
 
 Fluxury.dispatch(SET, { selectedState: 'CA' })

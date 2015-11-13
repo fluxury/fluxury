@@ -2,7 +2,7 @@ var test = require('tape');
 
 test( 'fluxury', function(t) {
   var Fluxury = require('./lib/index.js')
-  t.plan(13)
+  t.plan(15)
 
   t.equal(typeof Fluxury, 'object')
   t.equal(typeof Fluxury.createActions, 'function')
@@ -35,6 +35,10 @@ test( 'fluxury', function(t) {
   t.deepEqual(store.getState(), { foo: 1, bar: 2 })
   Fluxury.dispatch(SET, { foo: 2 })
   t.deepEqual(store.getState(), { foo: 2, bar: 2 })
+  Fluxury.dispatch(SET, { hey: ['ho', 'let\'s', 'go'] })
+  t.deepEqual(store.getState(), { foo: 2, bar: 2, hey: ['ho', 'let\'s', 'go'] })
+  Fluxury.dispatch(SET, { foo: 3 })
+  t.deepEqual(store.getState(), { foo: 3, bar: 2, hey: ['ho', 'let\'s', 'go'] })
 
   var store = Fluxury.createStore('CountStore', 0, function(state, action) {
     switch (action.type) {
