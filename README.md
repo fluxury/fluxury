@@ -155,6 +155,8 @@ Pull requests welcome. Enjoy!
 var React = require('react');
 var {dispatch, createStore, createActions} = require('fluxury');
 var {INC, DEC} = createActions('INC', 'DEC');
+var PureRenderMixin = require('react-addons-pure-render-mixin');
+
 
 var countStore = createStore('CountStore', 0, function(state, action) {
   switch (action.type) {
@@ -168,6 +170,8 @@ var countStore = createStore('CountStore', 0, function(state, action) {
 });
 
 var MyComponent = React.createClass({
+
+  mixins: [PureRenderMixin],
 
   componentDidMount: function() {
     this.token = countStore.addListener( this.handleStoreChange );
