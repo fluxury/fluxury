@@ -2,7 +2,7 @@ var test = require('tape');
 
 test( 'fluxury', function(t) {
   var Fluxury = require('./lib/index.js')
-  t.plan(19)
+  t.plan(20)
 
   t.equal(typeof Fluxury, 'object')
   t.equal(typeof Fluxury.createActions, 'function')
@@ -33,7 +33,8 @@ test( 'fluxury', function(t) {
   }, {
     getFoo: (state) => state.foo,
     getBar: (state) => state.bar,
-    filterHey: (state, params) => state.hey.filter((d) => d === params.text)
+    filterHey: (state, param) => state.hey.filter((d) => d === param),
+    filterNotHey: (state, param) => state.hey.filter((d) => d !== param)
   });
 
   var listenerCount = 0;
@@ -49,6 +50,7 @@ test( 'fluxury', function(t) {
   Fluxury.dispatch(SET, { foo: 3 })
   t.deepEqual(store.getState(), { foo: 3, bar: 2, hey: ['ho', 'let\'s', 'go'] })
   t.deepEqual(store.queries.filterHey('go'), ['go']);
+  t.deepEqual(store.queries.filterNotHey('go'), ['ho', 'let\'s']);
   // ensure that callback is invoked correct number of times
   t.equal(listenerCount, 4);
 
