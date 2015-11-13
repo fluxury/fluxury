@@ -2,13 +2,33 @@
 
 [![Circle CI](https://circleci.com/gh/fluxury/fluxury/tree/master.svg?style=svg)](https://circleci.com/gh/fluxury/fluxury/tree/master)
 
-Add sugar to Facebook's implementation of Flux architecture. It adds a little luxury to simplify your life.
+For the impatient:
 
-This library is similar to Reflux and Redux except that this library doesn't try to replace the dispatcher with a new implementation. The library encourages you into simple patterns but doesn't try to change the core concepts.
+```sh
+npm install --save fluxury
+```
 
-This library is an opinionated set of functions that allow you to easily define actions and stores; and dispatch actions to these stores.
+```js
+import {dispatch, createActions, createStore} from 'fluxury'
+```
 
-This new "Flux framework" adds a surface area of 3 functions.
+## Why another "Flux framework"?
+
+This is Flux plus 3 new "sugar" functions to guide you into the (state, action) -> state pattern.
+
+In flux@2.1, Facebook added 3 new abstract ES 2015 classes (FluxMapStore -> FluxReduceStore -> FluxStore). These stores guide you into the reducer pattern but, unfortunately, they also lead you into classes. This library reimplements the FluxStore in Douglas Crockford's class-free object oriented programming style.
+
+This library is similar to Reflux and Redux except that this library doesn't try to replace the dispatcher with a new implementation. The library encourages you into simple patterns but doesn't try to change the core concepts. The flux/Dispatcher and fbemitter/EventEmitter modules are the key to Flux and this project depends directly on Facebook's implementations.  
+
+This new "Flux framework" adds a surface area of 3 new functions:
+
+  - dispatch (submit actions to stores)
+  - createActions (define actions)
+  - createStores (define store, reducer and dependencies)
+
+Don't be afraid to read the code. It is sparse 55 lines of ES 2015 code.
+
+Pull requests welcome. Enjoy!
 
 ## API
 
