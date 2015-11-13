@@ -26,7 +26,7 @@ This new "Flux framework" adds a surface area of 3 new functions:
   - createActions
   - createStores
 
-Don't be afraid to read the code. It is sparse 55 lines of ES 2015 code.
+Don't be afraid to read the code. It is sparse 70 lines of ES 2015 code.
 
 Pull requests welcome. Enjoy!
 
