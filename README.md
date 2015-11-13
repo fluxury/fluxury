@@ -207,7 +207,7 @@ module.exports = MyComponent;
 
 ```
 
-## MapStore Example
+## MapStore with defensive copies
 
 A simple store that accumulates  data on each `SET` action.
 
@@ -233,7 +233,6 @@ dispatch(SET, { states: ['CA', 'OR', 'WA'] })
 // store.queries.getStates() => { states: ['CA', 'OR', 'WA']  }
 
 dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
-// store.queries.getStates() => { states: ['CA', 'OR', 'WA']] }
 // store.queries.getPrograms() => { programs: [{ name: 'A', states: ['CA']}] }
 
 dispatch(SET, { selectedState: 'CA' })
@@ -241,6 +240,36 @@ dispatch(SET, { selectedState: 'CA' })
 
 // store.getState() => { states: ['CA', 'OR', 'WA'], { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] }, selectedState: 'CA' }
 
+```
+
+## MapStore with Immutable data structures
+
+Here is a similar MapStore with Immutable.js.
+
+```js
+var {dispatch, createStore, createActions } = require('fluxury');
+var {SET, DELETE} = createActions('SET', 'DELETE');
+var Immutable = require('Immutable');
+
+var store = Fluxury.createStore('MapStore', Immutable.Map(), function(state, action) {
+  t.plan(8)
+  switch (action.type) {
+    case SET:
+      // combine both objects into a single new object
+      return state.merge(action.data);
+    default:
+      return state;
+  }
+}, {
+  getStates: (state) => state.get('states'),
+  getPrograms: (state) => state.get('programs'),
+  getSelectedState: (state) => state.get('selectedState'),
+  has: (state, param) => state.has(param),
+  includes: (state, param) => state.includes(param),
+  first: (state) => state.first(),
+  last: (state) => state.last(),
+  all: (state) => state.toJS(),
+});
 ```
 
 ## Example Applications

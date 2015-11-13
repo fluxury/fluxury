@@ -79,3 +79,46 @@ test( 'fluxury', function(t) {
 
   t.deepEqual( Object.keys(store), ['name', 'dispatchToken', 'addListener', 'getState', 'queries', 'waitFor'] );
 })
+
+test('ImmutableMapStore', function(t) {
+  var Fluxury = require('./lib/index'),
+      dispatch = Fluxury.dispatch
+      SET = 'SET',
+      Immutable = require('immutable');
+
+  var store = Fluxury.createStore('MapStore', Immutable.Map(), function(state, action) {
+    t.plan(8)
+    switch (action.type) {
+      case SET:
+        // combine both objects into a single new object
+        return state.merge(action.data);
+      default:
+        return state;
+    }
+  }, {
+    getStates: (state) => state.get('states'),
+    getPrograms: (state) => state.get('programs'),
+    getSelectedState: (state) => state.get('selectedState'),
+    has: (state, param) => state.has(param),
+    includes: (state, param) => state.includes(param),
+    first: (state) => state.first(),
+    last: (state) => state.last(),
+    all: (state) => state.toJS(),
+  });
+
+  dispatch(SET, { states: ['CA', 'OR', 'WA'] })
+  dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
+  dispatch(SET, { selectedState: 'CA' })
+
+  t.deepEqual( store.queries.getStates().toJS(), ['CA', 'OR', 'WA']  );
+  t.deepEqual( store.queries.getPrograms().toJS(), [{ name: 'A', states: ['CA']}] );
+  t.deepEqual( store.queries.getSelectedState(), 'CA' );
+  t.deepEqual( store.queries.all(), { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] , selectedState: 'CA' } );
+
+  t.deepEqual( store.queries.has('states'), true );
+  t.deepEqual( store.queries.first().toJS(), ['CA', 'OR', 'WA'] );
+  t.deepEqual( store.queries.last(), 'CA' );
+  t.deepEqual( store.queries.includes('CA'), true );
+
+
+})
