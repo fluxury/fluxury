@@ -2,7 +2,7 @@ var test = require('tape');
 
 test( 'fluxury', function(t) {
   var Fluxury = require('./lib/index.js')
-  t.plan(15)
+  t.plan(16)
 
   t.equal(typeof Fluxury, 'object')
   t.equal(typeof Fluxury.createActions, 'function')
@@ -25,11 +25,15 @@ test( 'fluxury', function(t) {
     var assign = require('object-assign');
       switch (action.type) {
       case SET:
+        // combine both objects into a single new object
         return assign({}, state, action.data)
       default:
         return state;
     }
   });
+
+  var listenerCount = 0;
+  store.addListener( () => listenerCount++ )
 
   Fluxury.dispatch(SET, { foo: 1, bar: 2 })
   t.deepEqual(store.getState(), { foo: 1, bar: 2 })
@@ -39,6 +43,9 @@ test( 'fluxury', function(t) {
   t.deepEqual(store.getState(), { foo: 2, bar: 2, hey: ['ho', 'let\'s', 'go'] })
   Fluxury.dispatch(SET, { foo: 3 })
   t.deepEqual(store.getState(), { foo: 3, bar: 2, hey: ['ho', 'let\'s', 'go'] })
+
+  // ensure that callback is invoked correct number of times
+  t.equal(listenerCount, 4);
 
   var store = Fluxury.createStore('CountStore', 0, function(state, action) {
     switch (action.type) {
