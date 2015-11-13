@@ -125,12 +125,67 @@ This new "Flux framework" adds a surface area of 3 functions.
 | getState | A function that returns the current state |
 
 
+## Put it all together
+
+```js
+var React = require('react');
+var {dispatch, createStore, createActions} = require('fluxury');
+var {INC, DEC} = createActions('INC', 'DEC');
+
+var countStore = Fluxury.createStore('CountStore', 0, function(state, action) {
+  switch (action.type) {
+    case INC:
+      return state+1;
+    case DEC:
+      return state-1;
+    default:
+      return state;
+  }
+});
+
+var MyComponent = React.createClass({
+
+  componentDidMount: function() {
+    this.token = countStore.addListener( this.handleStoreChange );
+  },
+
+  componentWillUnmount: function() {
+    this.token.remove();
+  },
+
+  handleStoreChange: function() {
+    this.setState({ count: countStore.getState() })
+  },
+
+  handleUpClick: function() {
+    /* Call dispatch to submit the action to the stores */
+    dispatch(INC)
+  },
+
+  handleDownClick: function() {
+    /* Call dispatch to submit the action to the stores */
+    dispatch(DEC)
+  },
+
+  render: function() {
+    return (
+      <div>
+        <p>{this.state.count}</p>
+        <button onClick={this.handleUpClick}>+1</button>
+        <button onClick={this.handleDownClick}>-1</button>
+      </div>
+    );
+  }
+
+});
+
+module.exports = MyComponent;
+
+```
 
 ## MapStore Example
 
-For simple projects with limited datasets you may be best suited to use a
-single store for the entire application. After all, you can nest the object as
-deeply as needed to organize and isolate your data.
+A simple store that accumulates  data on each `SET` action.
 
 ```js
 var {dispatch, createStore, createActions } = require('fluxury');
