@@ -33,7 +33,7 @@ test( 'fluxury', function(t) {
   }, {
     getFoo: (state) => state.foo,
     getBar: (state) => state.bar,
-    getGo: (state) => state.hey.filter((d) => d === 'go')
+    filterHey: (state, params) => state.hey.filter((d) => d === params.text)
   });
 
   var listenerCount = 0;
@@ -48,7 +48,7 @@ test( 'fluxury', function(t) {
   t.deepEqual(store.getState(), { foo: 2, bar: 2, hey: ['ho', 'let\'s', 'go'] })
   Fluxury.dispatch(SET, { foo: 3 })
   t.deepEqual(store.getState(), { foo: 3, bar: 2, hey: ['ho', 'let\'s', 'go'] })
-  t.deepEqual(store.queries.getGo(), ['go']);
+  t.deepEqual(store.queries.filterHey('go'), ['go']);
   // ensure that callback is invoked correct number of times
   t.equal(listenerCount, 4);
 
