@@ -17,7 +17,7 @@ export default Object.freeze({
     }
   },
 
-  /* transform a list of actions into useful functions */
+  /* transform a list of actions into key-mirrored object */
   createActions: function(...actions) {
     return Object.freeze(actions.reduce(function(a,b) {
       a[b] = b;
@@ -36,18 +36,16 @@ export default Object.freeze({
       queries = {};
     }
 
-    var dispatchToken = dispatcher.register( function(action) {
-      dispatcher.waitFor(waitFor);
-      var newState = reducer(currentState, action);
-      if (currentState !== newState) {
-        currentState = Object.freeze(newState);
-        emitter.emit(changedEvent);
-      }
-    });
-
     return Object.freeze({
       name: name,
-      dispatchToken: dispatchToken,
+      dispatchToken: dispatcher.register( function(action) {
+        dispatcher.waitFor(waitFor);
+        var newState = reducer(currentState, action);
+        if (currentState !== newState) {
+          currentState = Object.freeze(newState);
+          emitter.emit(changedEvent);
+        }
+      } ),
       addListener: function(cb) {
         return emitter.addListener(changedEvent, cb)
       },
