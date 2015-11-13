@@ -1,6 +1,6 @@
 {
   "name": "fluxury",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Add luxury sugar to simplify implementing Facebook's flavor of Flux architecture.",
   "main": "./lib/index.js",
   "jsnext:main": "index.js",

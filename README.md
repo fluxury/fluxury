@@ -145,6 +145,8 @@ Pull requests welcome. Enjoy!
 | dispatchToken | A number used with waitFor |
 | addListener | A function to add a callback for events |
 | getState | A function that returns the current state |
+| queries | An object with functions that accept `state` |
+| waitFor |  The array passed into createStore |
 
 
 ## Put it all together
