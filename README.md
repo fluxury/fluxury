@@ -32,7 +32,7 @@ Pull requests welcome. Enjoy!
 
 ## API
 
-  1. Fluxury.dispatch( type, data )
+  1. dispatch( type, data )
 
     Submit an action into the stores. You must specify the type and, optionally, some data.
 
@@ -44,7 +44,7 @@ Pull requests welcome. Enjoy!
     dispatch('LOAD_SETTINGS', { a: 1, b: 2 })
     ```
 
-  2. Fluxury.createActions(action1, action2, ..., actionN)
+  2. createActions(action1, action2, ..., actionN)
 
     Create your actions from a list of strings as `arguments`.
 
@@ -93,7 +93,7 @@ Pull requests welcome. Enjoy!
 
     ```
 
-  3. Fluxury.createStore(name, initialState, reducer)
+  3. createStore(name, initialState, reducer[ , queries, waitFor])
 
     Create a new store with a name and a reducer.
 
@@ -219,6 +219,10 @@ var store = createStore('MapStore', {}, function(state, action) {
     default:
       return state;
   }
+}, {
+  getState: (state) => state.states,
+  getPrograms: (state) => state.programs,
+  getSelectedState: (state) => state.selectedState
 });
 
 dispatch(SET, { states: ['CA', 'OR', 'WA'] })

@@ -2,7 +2,7 @@ var test = require('tape');
 
 test( 'fluxury', function(t) {
   var Fluxury = require('./lib/index.js')
-  t.plan(16)
+  t.plan(19)
 
   t.equal(typeof Fluxury, 'object')
   t.equal(typeof Fluxury.createActions, 'function')
@@ -30,20 +30,25 @@ test( 'fluxury', function(t) {
       default:
         return state;
     }
+  }, {
+    getFoo: (state) => state.foo,
+    getBar: (state) => state.bar,
+    getGo: (state) => state.hey.filter((d) => d === 'go')
   });
 
   var listenerCount = 0;
   store.addListener( () => listenerCount++ )
-
   Fluxury.dispatch(SET, { foo: 1, bar: 2 })
   t.deepEqual(store.getState(), { foo: 1, bar: 2 })
+  t.equal(store.queries.getFoo(), 1)
+  t.equal(store.queries.getBar(), 2)
   Fluxury.dispatch(SET, { foo: 2 })
   t.deepEqual(store.getState(), { foo: 2, bar: 2 })
   Fluxury.dispatch(SET, { hey: ['ho', 'let\'s', 'go'] })
   t.deepEqual(store.getState(), { foo: 2, bar: 2, hey: ['ho', 'let\'s', 'go'] })
   Fluxury.dispatch(SET, { foo: 3 })
   t.deepEqual(store.getState(), { foo: 3, bar: 2, hey: ['ho', 'let\'s', 'go'] })
-
+  t.deepEqual(store.queries.getGo(), ['go']);
   // ensure that callback is invoked correct number of times
   t.equal(listenerCount, 4);
 
@@ -70,5 +75,5 @@ test( 'fluxury', function(t) {
   Fluxury.dispatch(DEC)
   t.equal(store.getState(), 0)
 
-  t.deepEqual( Object.keys(store), ['name', 'dispatchToken', 'addListener', 'getState'] );
+  t.deepEqual( Object.keys(store), ['name', 'dispatchToken', 'addListener', 'getState', 'queries', 'waitFor'] );
 })
