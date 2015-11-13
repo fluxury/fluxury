@@ -22,9 +22,9 @@ This library is similar to Reflux and Redux except that this library doesn't try
 
 This new "Flux framework" adds a surface area of 3 new functions:
 
-  - dispatch (submit actions to stores)
-  - createActions (define actions)
-  - createStores (define store, reducer and dependencies)
+  - dispatch
+  - createActions
+  - createStores
 
 Don't be afraid to read the code. It is sparse 55 lines of ES 2015 code.
 
