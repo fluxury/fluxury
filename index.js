@@ -19,10 +19,10 @@ export default Object.freeze({
 
   /* transform a list of actions into useful functions */
   createActions: function(...actions) {
-    return actions.reduce(function(a,b) {
+    return Object.freeze(actions.reduce(function(a,b) {
       a[b] = b;
       return a;
-    }, {});
+    }, {}));
   },
 
   /* create a named store with an initialState and a reducer to move it forward */

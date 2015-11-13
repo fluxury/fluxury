@@ -17,9 +17,11 @@ This new "Flux framework" adds a surface area of 3 functions.
     Submit an action into the stores. You must specify the type and, optionally, some data.
 
     ```js
-    Fluxury.dispatch('REQUEST_SETTINGS')
+    import {dispatch} from 'fluxury';
+
+    dispatch('REQUEST_SETTINGS')
     // or with data
-    Fluxury.dispatch('LOAD_SETTINGS', { a: 1, b: 2 })
+    dispatch('LOAD_SETTINGS', { a: 1, b: 2 })
     ```
 
   2. Fluxury.createActions(action1, action2, ..., actionN)
@@ -28,7 +30,9 @@ This new "Flux framework" adds a surface area of 3 functions.
 
     _MyActions.js_
     ```js
-    export default Fluxury.createActions('INC', 'DEC', 'SET')
+    import {createActions} from 'fluxury';
+
+    export default createActions('INC', 'DEC', 'SET')
     ```
 
     This returns a key mirrored object.
@@ -47,14 +51,14 @@ This new "Flux framework" adds a surface area of 3 functions.
     import {INC} from './MyActions'
 
     var React = require('react');
-    var Fluxury = require('fluxury');
+    var {dispatch} = require('fluxury');
     var PropTypes = React.PropTypes;
 
     var MyComponent = React.createClass({
 
       handleClick: function() {
         /* Call dispatch to submit the action to the stores */
-        Fluxury.dispatch(INC)
+        dispatch(INC)
       }
 
       render: function() {
@@ -74,20 +78,24 @@ This new "Flux framework" adds a surface area of 3 functions.
     Create a new store with a name and a reducer.
 
     ```js
-    import {INC} from './MyActions'
-    export default Fluxury.createStore('CountStore', 0, function(state, action) {
+    import {INC} from './MyActions';
+    import {createStore} from 'fluxury';
+
+    export default createStore('CountStore', 0, function(state, action) {
       if (action.type === INC) {
         return state + 1;
       }
       return state;
-    })
+    });
     ```
 
-    Perhaps you prefer the class switch case:
+    Perhaps you prefer the classic switch case form:
 
     ```js
     import {INC} from './MyActions'
-    export default Fluxury.createStore('CountStore', 0, (state, action) => {
+    import {createStore} from 'fluxury';
+
+    export default createStore('CountStore', 0, (state, action) => {
       switch (action.type)
       case INC:
         return state + 1;
@@ -100,14 +108,14 @@ This new "Flux framework" adds a surface area of 3 functions.
 
     ```js
     import {INC} from './MyActions'
-    export default Fluxury.createStore('CountStore', 0, function(state, action) {
+    import {createStore} from 'fluxury';
+
+    export default createStore('CountStore', 0, function(state, action) {
         return state + (action.type === INC ? 1 : 0);
     })
     ```
 
-    As previously discovered by many the reducer pattern remains a powerful tool.
-
-
+    As previously discovered the reducer pattern remains a powerful tool.
 
 ## MapStore Example
 
@@ -116,10 +124,9 @@ single store for the entire application. After all, you can nest the object as
 deeply as needed to organize and isolate your data.
 
 ```js
-var Fluxury = require('fluxury');
+var {dispatch, createStore, createActions } = require('fluxury');
 
-// no need for Fluxury.createActions when you have a single action!
-var SET = 'SET';
+var { SET } = createActions('SET');
 
 var store = Fluxury.createStore('MapStore', {}, function(state, action) {
   switch (action.type) {
@@ -133,6 +140,9 @@ var store = Fluxury.createStore('MapStore', {}, function(state, action) {
 Fluxury.dispatch(SET, { states: ['CA', 'OR', 'WA'] })
 // store.getState() => { states: ['CA', 'OR', 'WA']  }
 
+Fluxury.dispatch(SET, { programs: [{ name: 'A', state: ['CA']}] })
+// store.getState() => { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] }
+
 Fluxury.dispatch(SET, { selectedState: 'CA' })
-// store.getState() => { states: ['CA', 'OR', 'WA'], selectedState: 'CA' }
+// store.getState() => { states: ['CA', 'OR', 'WA'], { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] }, selectedState: 'CA' }
 ```
