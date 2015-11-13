@@ -26,9 +26,15 @@ export default Object.freeze({
   },
 
   /* create a named store with an initialState and a reducer to move it forward */
-  createStore: function(name, initialState, reducer, waitFor=[]) {
+  createStore: function(name, initialState, reducer, queries={}, waitFor=[]) {
     var currentState = Object.freeze(initialState);
     var emitter = new EventEmitter();
+
+    // The last argument is always waitFor. If queries is an array then it is used for waitFor.
+    if (Array.isArray(queries)) {
+      waitFor = queries;
+      queries = {};
+    }
 
     var dispatchToken = dispatcher.register( function(action) {
       dispatcher.waitFor(waitFor);
@@ -47,7 +53,15 @@ export default Object.freeze({
       },
       getState: function(cb) {
         return currentState;
-      }
+      },
+      queries: Object.freeze(Object.keys(queries).reduce(function(a, b, i) {
+        var newFunc = {};
+        newFunc[b] = function() {
+          return queries[b](currentState);
+        }
+        return Object.assign({}, a, newFunc)
+      }, {})),
+      waitFor: waitFor
     });
 
   }
