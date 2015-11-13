@@ -27,14 +27,14 @@ export default Object.freeze({
 
   /* create a named store with an initialState and a reducer to move it forward */
   createStore: function(name, initialState, reducer, waitFor=[]) {
-    var currentState = initialState;
+    var currentState = Object.freeze(initialState);
     var emitter = new EventEmitter();
 
     var dispatchToken = dispatcher.register( function(action) {
       dispatcher.waitFor(waitFor);
       var newState = reducer(currentState, action);
       if (currentState !== newState) {
-        currentState = newState;
+        currentState = Object.freeze(newState);
         emitter.emit(changedEvent);
       }
     });

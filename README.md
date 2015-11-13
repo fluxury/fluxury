@@ -135,24 +135,26 @@ deeply as needed to organize and isolate your data.
 ```js
 var {dispatch, createStore, createActions } = require('fluxury');
 
-var { SET } = createActions('SET');
+var actions = createActions('SET'),
+    SET = actions.SET;
 
-var store = Fluxury.createStore('MapStore', {}, function(state, action) {
+var store = createStore('MapStore', {}, function(state, action) {
   switch (action.type) {
     case SET:
-      return Object.assign(state, action.data)
+      // combine both objects into a single new object
+      return Object.assign({}, state, action.data)
     default:
       return state;
   }
 });
 
-Fluxury.dispatch(SET, { states: ['CA', 'OR', 'WA'] })
+dispatch(SET, { states: ['CA', 'OR', 'WA'] })
 // store.getState() => { states: ['CA', 'OR', 'WA']  }
 
-Fluxury.dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
+dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
 // store.getState() => { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] }
 
-Fluxury.dispatch(SET, { selectedState: 'CA' })
+dispatch(SET, { selectedState: 'CA' })
 // store.getState() => { states: ['CA', 'OR', 'WA'], { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] }, selectedState: 'CA' }
 ```
 

@@ -25,7 +25,7 @@ test( 'fluxury', function(t) {
     var assign = require('object-assign');
       switch (action.type) {
       case SET:
-        return assign(state, action.data)
+        return assign({}, state, action.data)
       default:
         return state;
     }
