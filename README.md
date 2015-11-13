@@ -132,7 +132,7 @@ var React = require('react');
 var {dispatch, createStore, createActions} = require('fluxury');
 var {INC, DEC} = createActions('INC', 'DEC');
 
-var countStore = Fluxury.createStore('CountStore', 0, function(state, action) {
+var countStore = createStore('CountStore', 0, function(state, action) {
   switch (action.type) {
     case INC:
       return state+1;
@@ -211,6 +211,6 @@ dispatch(SET, { selectedState: 'CA' })
 // store.getState() => { states: ['CA', 'OR', 'WA'], { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] }, selectedState: 'CA' }
 ```
 
-## App Example
+## Example Applications
 
 [CSV File Viewer](https://github.com/petermoresi/react-csv-file-viewer)
