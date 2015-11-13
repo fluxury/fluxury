@@ -55,7 +55,7 @@ Pull requests welcome. Enjoy!
     export default createActions('INC', 'DEC', 'SET')
     ```
 
-    This returns a key mirrored object.
+    This returns a key mirrored object. The key and the value are equal. It is a useful JS hack.
 
     ```js
     {
