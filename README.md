@@ -115,7 +115,16 @@ This new "Flux framework" adds a surface area of 3 functions.
     })
     ```
 
-    As previously discovered the reducer pattern remains a powerful tool.
+## Store Properties and Methods
+
+|name|comment|
+|---------|------|
+| name | The name supplied when creating the store |
+| dispatchToken | A number used with waitFor |
+| addListener | A function to add a callback for events |
+| getState | A function that returns the current state |
+
+
 
 ## MapStore Example
 
