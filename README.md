@@ -134,9 +134,7 @@ deeply as needed to organize and isolate your data.
 
 ```js
 var {dispatch, createStore, createActions } = require('fluxury');
-
-var actions = createActions('SET'),
-    SET = actions.SET;
+var {SET} = createActions('SET');
 
 var store = createStore('MapStore', {}, function(state, action) {
   switch (action.type) {
