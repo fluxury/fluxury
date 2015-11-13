@@ -96,9 +96,7 @@ test('ImmutableMapStore', function(t) {
         return state;
     }
   }, {
-    getStates: (state) => state.get('states'),
-    getPrograms: (state) => state.get('programs'),
-    getSelectedState: (state) => state.get('selectedState'),
+    get: (state, param) => state.get(param),
     has: (state, param) => state.has(param),
     includes: (state, param) => state.includes(param),
     first: (state) => state.first(),
@@ -110,9 +108,9 @@ test('ImmutableMapStore', function(t) {
   dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
   dispatch(SET, { selectedState: 'CA' })
 
-  t.deepEqual( store.queries.getStates().toJS(), ['CA', 'OR', 'WA']  );
-  t.deepEqual( store.queries.getPrograms().toJS(), [{ name: 'A', states: ['CA']}] );
-  t.deepEqual( store.queries.getSelectedState(), 'CA' );
+  t.deepEqual( store.queries.get('states').toJS(), ['CA', 'OR', 'WA']  );
+  t.deepEqual( store.queries.get('programs').toJS(), [{ name: 'A', states: ['CA']}] );
+  t.deepEqual( store.queries.get('selectedState'), 'CA' );
   t.deepEqual( store.queries.all(), { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] , selectedState: 'CA' } );
 
   t.deepEqual( store.queries.has('states'), true );

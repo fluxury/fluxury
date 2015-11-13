@@ -249,9 +249,9 @@ Here is a similar MapStore with Immutable.js.
 ```js
 var {dispatch, createStore, createActions } = require('fluxury');
 var {SET, DELETE} = createActions('SET', 'DELETE');
-var Immutable = require('Immutable');
+var {Map} = require('Immutable');
 
-var store = Fluxury.createStore('MapStore', Immutable.Map(), function(state, action) {
+var store = createStore('MapStore', Map(), function(state, action) {
   t.plan(8)
   switch (action.type) {
     case SET:
@@ -261,9 +261,7 @@ var store = Fluxury.createStore('MapStore', Immutable.Map(), function(state, act
       return state;
   }
 }, {
-  getStates: (state) => state.get('states'),
-  getPrograms: (state) => state.get('programs'),
-  getSelectedState: (state) => state.get('selectedState'),
+  get: (state, param) => state.get(param),
   has: (state, param) => state.has(param),
   includes: (state, param) => state.includes(param),
   first: (state) => state.first(),
