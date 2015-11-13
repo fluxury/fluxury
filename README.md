@@ -26,7 +26,7 @@ This new "Flux framework" adds a surface area of 3 new functions:
   - createActions
   - createStores
 
-Don't be afraid to read the code. It is only 69 lines of commented code.
+Don't be afraid to read the code. It is only 69 lines!
 
 Pull requests welcome. Enjoy!
 
