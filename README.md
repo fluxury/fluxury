@@ -32,16 +32,19 @@ Pull requests welcome. Enjoy!
 
 ## API
 
-  1. dispatch( type, data )
+  1. dispatch( type, data ) or dispatch( action )
 
     Submit an action into the stores. You must specify the type and, optionally, some data.
 
     ```js
     import {dispatch} from 'fluxury';
 
-    dispatch('REQUEST_SETTINGS')
+    // dispatch an action with a string
+    dispatch('REQUEST_SETTINGS')  // => { type: 'LOAD_SETTINGS', data: undefined }
     // or with data
-    dispatch('LOAD_SETTINGS', { a: 1, b: 2 })
+    dispatch('LOAD_SETTINGS', { a: 1, b: 2 }) // => { type: 'LOAD_SETTINGS', data: { a: 1, b: 2 } }
+    // or with a custom object
+    dispatch({ actionType: 'move', mode: 'off the rails' })
     ```
 
   2. createActions(action1, action2, ..., actionN)
