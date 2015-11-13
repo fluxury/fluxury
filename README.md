@@ -14,7 +14,7 @@ import {dispatch, createActions, createStore} from 'fluxury'
 
 ## Why another "Flux framework"?
 
-This is Flux plus 3 new "sugar" functions to guide you into the (state, action) -> state pattern.
+This is Flux plus 3 new "sugar" functions to guide you into the `(state, action) -> state` pattern.
 
 In flux@2.1, Facebook added 3 new abstract ES 2015 classes (FluxMapStore -> FluxReduceStore -> FluxStore). These stores guide you into the reducer pattern but, unfortunately, they also lead you into classes. This library reimplements the FluxStore in Douglas Crockford's class-free object oriented programming style.
 
