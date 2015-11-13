@@ -95,7 +95,7 @@ Pull requests welcome. Enjoy!
 
   3. createStore(name, initialState, reducer[ , queries, waitFor])
 
-    Create a new store with a name and a reducer.
+    Create a new store with a name, initialState, reducer and optionally an object with queries and an array with dispatch tokens sent to waitFor.
 
     ```js
     import {INC} from './MyActions';
@@ -106,6 +106,8 @@ Pull requests welcome. Enjoy!
         return state + 1;
       }
       return state;
+    }, {
+      getCount: (state) => state // state is the count itself!
     });
     ```
 
