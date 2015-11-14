@@ -1,6 +1,6 @@
 {
   "name": "fluxury",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "Add luxury sugar to simplify implementing Facebook's flavor of Flux architecture.",
   "main": "./lib/index.js",
   "jsnext:main": "index.js",
@@ -17,5 +17,18 @@
     "immutable": "^3.7.5",
     "object-assign": "^4.0.1",
     "tape": "^4.2.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fluxury/fluxury.git"
+  },
+  "keywords": [
+    "react",
+    "react-component",
+    "flux"
+  ],
+  "bugs": {
+    "url": "https://github.com/fluxury/fluxury/issues"
+  },
+  "homepage": "https://github.com/fluxury/fluxury#readme"
 }
