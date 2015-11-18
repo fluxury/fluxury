@@ -96,9 +96,9 @@ Pull requests welcome. Enjoy!
 
     ```
 
-  3. createStore(name, initialState, reducer[ , queries, waitFor])
+  3. createStore(name, initialState, reducer[ , methods, waitFor])
 
-    Create a new store with a name, initialState, reducer and optionally an object with queries and an array with dispatch tokens sent to waitFor.
+    Create a new store with a name, initialState, reducer and optionally an object with methods and an array with dispatch tokens sent to waitFor.
 
     ```js
     import {INC} from './MyActions';
@@ -148,7 +148,6 @@ Pull requests welcome. Enjoy!
 | dispatchToken | A number used with waitFor |
 | addListener | A function to add a callback for events |
 | getState | A function that returns the current state |
-| queries | An object with functions that accept `state` |
 | waitFor |  The array passed into createStore |
 
 
@@ -237,13 +236,13 @@ var store = createStore('MapStore', {}, function(state, action) {
 });
 
 dispatch(SET, { states: ['CA', 'OR', 'WA'] })
-// store.queries.getStates() => { states: ['CA', 'OR', 'WA']  }
+// store.getStates() => { states: ['CA', 'OR', 'WA']  }
 
 dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
-// store.queries.getPrograms() => { programs: [{ name: 'A', states: ['CA']}] }
+// store.getPrograms() => { programs: [{ name: 'A', states: ['CA']}] }
 
 dispatch(SET, { selectedState: 'CA' })
-// store.queries.getSelectedState() => 'CA'
+// store.getSelectedState() => 'CA'
 
 // store.getState() => { states: ['CA', 'OR', 'WA'], { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] }, selectedState: 'CA' }
 
