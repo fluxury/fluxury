@@ -41,16 +41,16 @@ test( 'fluxury', function(t) {
   store.addListener( () => listenerCount++ )
   Fluxury.dispatch(SET, { foo: 1, bar: 2 })
   t.deepEqual(store.getState(), { foo: 1, bar: 2 })
-  t.equal(store.queries.getFoo(), 1)
-  t.equal(store.queries.getBar(), 2)
+  t.equal(store.getFoo(), 1)
+  t.equal(store.getBar(), 2)
   Fluxury.dispatch(SET, { foo: 2 })
   t.deepEqual(store.getState(), { foo: 2, bar: 2 })
   Fluxury.dispatch(SET, { hey: ['ho', 'let\'s', 'go'] })
   t.deepEqual(store.getState(), { foo: 2, bar: 2, hey: ['ho', 'let\'s', 'go'] })
   Fluxury.dispatch(SET, { foo: 3 })
   t.deepEqual(store.getState(), { foo: 3, bar: 2, hey: ['ho', 'let\'s', 'go'] })
-  t.deepEqual(store.queries.filterHey('go'), ['go']);
-  t.deepEqual(store.queries.filterNotHey('go'), ['ho', 'let\'s']);
+  t.deepEqual(store.filterHey('go'), ['go']);
+  t.deepEqual(store.filterNotHey('go'), ['ho', 'let\'s']);
   // ensure that callback is invoked correct number of times
   t.equal(listenerCount, 4);
 
@@ -77,7 +77,7 @@ test( 'fluxury', function(t) {
   Fluxury.dispatch(DEC)
   t.equal(store.getState(), 0)
 
-  t.deepEqual( Object.keys(store), ['name', 'dispatchToken', 'addListener', 'getState', 'queries', 'waitFor'] );
+  t.deepEqual( Object.keys(store), ['name', 'dispatchToken', 'addListener', 'getState', 'waitFor'] );
 })
 
 test('ImmutableMapStore', function(t) {
@@ -108,15 +108,15 @@ test('ImmutableMapStore', function(t) {
   dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
   dispatch(SET, { selectedState: 'CA' })
 
-  t.deepEqual( store.queries.get('states').toJS(), ['CA', 'OR', 'WA']  );
-  t.deepEqual( store.queries.get('programs').toJS(), [{ name: 'A', states: ['CA']}] );
-  t.deepEqual( store.queries.get('selectedState'), 'CA' );
-  t.deepEqual( store.queries.all(), { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] , selectedState: 'CA' } );
+  t.deepEqual( store.get('states').toJS(), ['CA', 'OR', 'WA']  );
+  t.deepEqual( store.get('programs').toJS(), [{ name: 'A', states: ['CA']}] );
+  t.deepEqual( store.get('selectedState'), 'CA' );
+  t.deepEqual( store.all(), { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] , selectedState: 'CA' } );
 
-  t.deepEqual( store.queries.has('states'), true );
-  t.deepEqual( store.queries.first().toJS(), ['CA', 'OR', 'WA'] );
-  t.deepEqual( store.queries.last(), 'CA' );
-  t.deepEqual( store.queries.includes('CA'), true );
+  t.deepEqual( store.has('states'), true );
+  t.deepEqual( store.first().toJS(), ['CA', 'OR', 'WA'] );
+  t.deepEqual( store.last(), 'CA' );
+  t.deepEqual( store.includes('CA'), true );
 
 
 })
