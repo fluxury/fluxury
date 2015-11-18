@@ -87,7 +87,7 @@ test('ImmutableMapStore', function(t) {
       Immutable = require('immutable');
 
   var store = Fluxury.createStore('MapStore', Immutable.Map(), function(state, action) {
-    t.plan(8)
+    t.plan(9)
     switch (action.type) {
       case SET:
         // combine both objects into a single new object
@@ -103,6 +103,19 @@ test('ImmutableMapStore', function(t) {
     last: (state) => state.last(),
     all: (state) => state.toJS(),
   });
+
+  t.deepEqual( Object.keys(store), [
+    'name',
+    'dispatchToken',
+    'addListener',
+    'getState',
+    'waitFor',
+    'get',
+    'has',
+    'includes',
+    'first',
+    'last',
+    'all'] );
 
   dispatch(SET, { states: ['CA', 'OR', 'WA'] })
   dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
