@@ -2,7 +2,7 @@
 
 [![Circle CI](https://circleci.com/gh/fluxury/fluxury/tree/master.svg?style=svg)](https://circleci.com/gh/fluxury/fluxury/tree/master)
 
-For the impatient:
+Quick start:
 
 ```sh
 npm install --save fluxury
@@ -14,7 +14,7 @@ import {dispatch, createActions, createStore} from 'fluxury'
 
 ## Why another "Flux framework"?
 
-This is Flux plus 3 new "sugar" functions to guide you into the `(state, action) -> state` pattern.
+This library adds 3 functions to Facebook's flux implementation to guide you into the `(state, action) -> state` pattern.
 
 In flux@2.1, Facebook added 3 new abstract ES 2015 classes (FluxMapStore -> FluxReduceStore -> FluxStore). These stores guide you into the reducer pattern but, unfortunately, they also lead you into classes. This library reimplements the FluxStore in Douglas Crockford's class-free object oriented programming style.
 
@@ -26,11 +26,9 @@ This new "Flux framework" adds a surface area of 3 new functions:
   - createActions
   - createStores
 
-Don't be afraid to read the code. It is only 69 lines!
+Enjoy!
 
-Pull requests welcome. Enjoy!
-
-## API
+## API Reference
 
   1. dispatch( type, data ) or dispatch( action )
 
@@ -149,7 +147,6 @@ Pull requests welcome. Enjoy!
 | addListener | A function to add a callback for events |
 | getState | A function that returns the current state |
 | waitFor |  The array passed into createStore |
-
 
 ## Put it all together
 
