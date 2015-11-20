@@ -55,8 +55,8 @@ export default Object.freeze({
       waitFor: waitFor
     }, Object.keys(methods).reduce(function(a, b, i) {
       var newFunc = {};
-      newFunc[b] = function(params) {
-        return methods[b](currentState, params);
+      newFunc[b] = function(...params) {
+        return methods[b](currentState, ...params);
       }
       return Object.assign({}, a, newFunc)
     }, {})));
