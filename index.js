@@ -39,7 +39,9 @@ export default Object.freeze({
     return Object.freeze(Object.assign({
       name: name,
       dispatchToken: dispatcher.register( function(action) {
-        dispatcher.waitFor(waitFor);
+        if (waitFor.length > 0) {
+          dispatcher.waitFor(waitFor);
+        }
         var newState = reducer(currentState, action);
         if (currentState !== newState) {
           currentState = Object.freeze(newState);
