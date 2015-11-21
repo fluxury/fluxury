@@ -12,7 +12,7 @@ npm install --save fluxury
 import {dispatch, createActions, createStore} from 'fluxury'
 ```
 
-## Why another "Flux framework"?
+## The Gist
 
 This library adds 3 functions to Facebook's flux implementation to guide you into the `(state, action) -> state` pattern.
 
