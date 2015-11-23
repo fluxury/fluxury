@@ -42,7 +42,7 @@ export default Object.freeze({
         if (waitFor.length > 0) {
           dispatcher.waitFor(waitFor);
         }
-        var newState = reducer(currentState, action);
+        var newState = reducer(currentState, action, dispatcher);
         if (currentState !== newState) {
           currentState = Object.freeze(newState);
           emitter.emit(changedEvent);
