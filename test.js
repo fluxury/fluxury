@@ -77,7 +77,7 @@ test( 'fluxury', function(t) {
   Fluxury.dispatch(DEC)
   t.equal(store.getState(), 0)
 
-  t.deepEqual( Object.keys(store), ['name', 'dispatchToken', 'addListener', 'getState', 'waitFor'] );
+  t.deepEqual( Object.keys(store), ['name', 'dispatchToken', 'addListener', 'getState'] );
 })
 
 test('ImmutableMapStore', function(t) {
@@ -109,7 +109,6 @@ test('ImmutableMapStore', function(t) {
     'dispatchToken',
     'addListener',
     'getState',
-    'waitFor',
     'get',
     'has',
     'includes',
