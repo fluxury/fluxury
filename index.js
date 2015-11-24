@@ -1,8 +1,10 @@
 /* Fluxury - Copyright 2015 Peter W Moresi */
 import {EventEmitter} from 'fbemitter';
 import {Dispatcher} from 'flux';
-var dispatcher = new Dispatcher();
-var changedEvent = 'change';
+
+let dispatcher = new Dispatcher(),
+  changedEvent = 'change',
+  waitFor = dispatcher.waitFor.bind(dispatcher);
 
 export default Object.freeze({
 
@@ -33,7 +35,7 @@ export default Object.freeze({
     return Object.freeze(Object.assign({
       name: name,
       dispatchToken: dispatcher.register( function(action) {
-        var newState = reducer(currentState, action, dispatcher.waitFor.bind(dispatcher));
+        var newState = reducer(currentState, action, waitFor);
         if (currentState !== newState) {
           currentState = Object.freeze(newState);
           emitter.emit(changedEvent);
