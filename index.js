@@ -33,7 +33,7 @@ export default Object.freeze({
     return Object.freeze(Object.assign({
       name: name,
       dispatchToken: dispatcher.register( function(action) {
-        var newState = reducer(currentState, action, dispatcher.waitFor);
+        var newState = reducer(currentState, action, dispatcher.waitFor.bind(dispatcher));
         if (currentState !== newState) {
           currentState = Object.freeze(newState);
           emitter.emit(changedEvent);
