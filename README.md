@@ -94,25 +94,9 @@ Enjoy!
 
     ```
 
-  3. createStore(name, initialState, reducer[ , methods, waitFor])
+  3. createStore(name, initialState, reducer, methods)
 
-    Create a new store with a name, initialState, reducer and optionally an object with methods and an array with dispatch tokens sent to waitFor.
-
-    ```js
-    import {INC} from './MyActions';
-    import {createStore} from 'fluxury';
-
-    export default createStore('CountStore', 0, function(state, action) {
-      if (action.type === INC) {
-        return state + 1;
-      }
-      return state;
-    }, {
-      getCount: (state) => state // state is the count itself!
-    });
-    ```
-
-    Perhaps you prefer the classic switch case form:
+    Create a new store with a name, initialState, reducer function and an object with methods that maybe used to operate state.
 
     ```js
     import {INC} from './MyActions'
@@ -124,32 +108,48 @@ Enjoy!
         return state + 1;
       default:
         return state;
+    }, {
+      getCount: (state) => state // state is the count itself!
     })
     ```
 
-    In this example you can make them both disappear:
+    In addition to the state and action the reduce function sends the waitFor as the third argument. This allows stores to express dependencies on data in other stores and ensure that their reducers are executed prior to continuing execution.
 
     ```js
-    import {INC} from './MyActions'
+    import {loadMessage} from './MyActions'
     import {createStore} from 'fluxury';
 
-    export default createStore('CountStore', 0, function(state, action) {
-        return state + (action.type === INC ? 1 : 0);
+    const MessageStore = createStore('MessageStore', [], function(state, action) {
+        switch(action.type) {
+          case loadMessage:
+            return state.concat(action.message)
+          default:
+            return state
+        }
     })
-    ```
 
-    In addition to the state and action the reducer function sends the dispatcher
-    as the third argument.
+    const MessageCountStore = createStore( 'MessageCountStore', 0,
+      function(state, action, waitFor) {
+        // ensure that MessageStore reducer is executed before continuing
+        waitFor([MessageStore.dispatchToken])
+        switch(action.type) {
+          case loadMessage:
+            return state+1
+          default:
+            return state
+        }
+      }
+    )
+    ```
 
 ## Store Properties and Methods
 
-|name|comment|
+| name | comment |
 |---------|------|
 | name | The name supplied when creating the store |
 | dispatchToken | A number used with waitFor |
 | addListener | A function to add a callback for events |
 | getState | A function that returns the current state |
-| waitFor |  The array passed into createStore |
 
 ## Put it all together
 
