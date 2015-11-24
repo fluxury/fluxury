@@ -113,7 +113,7 @@ Enjoy!
     })
     ```
 
-    In addition to the state and action the reduce function sends the waitFor as the third argument. This allows stores to express dependencies on data in other stores and ensure that their reducers are executed prior to continuing execution.
+    In addition to the state and action the reducer function sends the waitFor as the third argument. This allows stores to express dependencies on data in other stores and ensure that their reducers are executed prior to continuing execution. This ensures that the correct order of operation is performed.
 
     ```js
     import {loadMessage} from './MyActions'
