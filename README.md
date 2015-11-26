@@ -24,7 +24,7 @@ This new "Flux framework" adds a surface area of 3 new functions:
 
   - dispatch
   - createActions
-  - createStores
+  - createStore
 
 Enjoy!
 
