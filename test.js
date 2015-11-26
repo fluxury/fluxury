@@ -22,13 +22,12 @@ test( 'fluxury', function(t) {
   } )
 
   var store = Fluxury.createStore('MapStore', {}, function(state, action) {
-    var assign = require('object-assign');
-      switch (action.type) {
+    switch (action.type) {
       case SET:
-        // combine both objects into a single new object
-        return assign({}, state, action.data)
+      // combine both objects into a single new object
+      return Object.assign({}, state, action.data)
       default:
-        return state;
+      return state;
     }
   }, {
     getFoo: (state) => state.foo,
@@ -57,11 +56,11 @@ test( 'fluxury', function(t) {
   var store = Fluxury.createStore('CountStore', 0, function(state, action) {
     switch (action.type) {
       case INC:
-        return state+1;
+      return state+1;
       case DEC:
-        return state-1;
+      return state-1;
       default:
-        return state;
+      return state;
     }
   });
 
@@ -82,18 +81,18 @@ test( 'fluxury', function(t) {
 
 test('ImmutableMapStore', function(t) {
   var Fluxury = require('./lib/index'),
-      dispatch = Fluxury.dispatch
-      SET = 'SET',
-      Immutable = require('immutable');
+  dispatch = Fluxury.dispatch
+  SET = 'SET',
+  Immutable = require('immutable');
 
   var store = Fluxury.createStore('MapStore', Immutable.Map(), function(state, action) {
     t.plan(9)
     switch (action.type) {
       case SET:
-        // combine both objects into a single new object
-        return state.merge(action.data);
+      // combine both objects into a single new object
+      return state.merge(action.data);
       default:
-        return state;
+      return state;
     }
   }, {
     get: (state, param) => state.get(param),
@@ -114,7 +113,8 @@ test('ImmutableMapStore', function(t) {
     'includes',
     'first',
     'last',
-    'all'] );
+    'all']
+  );
 
   dispatch(SET, { states: ['CA', 'OR', 'WA'] })
   dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
@@ -141,46 +141,46 @@ test('waitFor works correctly', function(t) {
   t.plan(10)
 
   var MessageStore = createStore('MessageStore', [], function(state, action) {
-      switch(action.type) {
-        case 'loadMessage':
-          return state.concat(action.data)
-        default:
-          return state
-      }
+    switch(action.type) {
+      case 'loadMessage':
+      return state.concat(action.data)
+      default:
+      return state
+    }
   })
 
   var MessageCountStore = createStore( 'MessageCountStore', 0,
-    function(state, action, waitFor) {
-      // ensure that MessageStore reducer is executed before continuing
-      waitFor([MessageStore.dispatchToken])
-      switch(action.type) {
-        case 'loadMessage':
-          return state+1
-        default:
-          return state
-      }
+  function(state, action, waitFor) {
+    // ensure that MessageStore reducer is executed before continuing
+    waitFor([MessageStore.dispatchToken])
+    switch(action.type) {
+      case 'loadMessage':
+      return state+1
+      default:
+      return state
     }
-  )
+  }
+)
 
-  MessageStore.addListener(function() {
-    dispatchCount += 1
-  })
+MessageStore.addListener(function() {
+  dispatchCount += 1
+})
 
-  dispatch('loadMessage', 'Test')
-  t.equals(MessageStore.getState().length, 1)
-  t.equals(MessageCountStore.getState(), 1)
-  t.deepEqual(MessageStore.getState(), ['Test'])
+dispatch('loadMessage', 'Test')
+t.equals(MessageStore.getState().length, 1)
+t.equals(MessageCountStore.getState(), 1)
+t.deepEqual(MessageStore.getState(), ['Test'])
 
-  dispatch('loadMessage', 'Test2')
-  t.equals(MessageStore.getState().length, 2)
-  t.equals(MessageCountStore.getState(), 2)
-  t.deepEqual(MessageStore.getState(), ['Test', 'Test2'])
+dispatch('loadMessage', 'Test2')
+t.equals(MessageStore.getState().length, 2)
+t.equals(MessageCountStore.getState(), 2)
+t.deepEqual(MessageStore.getState(), ['Test', 'Test2'])
 
-  dispatch('loadMessage', 'Test3')
-  t.equals(MessageStore.getState().length, 3)
-  t.equals(MessageCountStore.getState(), 3)
-  t.deepEqual(MessageStore.getState(), ['Test', 'Test2', 'Test3'])
+dispatch('loadMessage', 'Test3')
+t.equals(MessageStore.getState().length, 3)
+t.equals(MessageCountStore.getState(), 3)
+t.deepEqual(MessageStore.getState(), ['Test', 'Test2', 'Test3'])
 
-  t.equal(dispatchCount, 3)
+t.equal(dispatchCount, 3)
 
 })
