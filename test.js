@@ -1,27 +1,19 @@
 var test = require('tape');
 
 test( 'fluxury', function(t) {
-  var Fluxury = require('./lib/index.js')
-  t.plan(20)
+  var fluxury = require('./lib/index.js')
+  t.plan(18)
 
-  t.equal(typeof Fluxury, 'object')
-  t.equal(typeof Fluxury.createActions, 'function')
-  t.equal(typeof Fluxury.createStore, 'function')
-  t.equal(typeof Fluxury.dispatch, 'function')
-  t.equal( Object.isFrozen(Fluxury), true)
+  t.equal(typeof fluxury, 'object')
+  t.equal(typeof fluxury.createStore, 'function')
+  t.equal(typeof fluxury.dispatch, 'function')
+  t.equal( Object.isFrozen(fluxury), true)
 
-  var actions = Fluxury.createActions('INC', 'DEC', 'SET'),
-  INC = actions.INC,
-  DEC = actions.DEC,
-  SET = actions.SET;
+  var INC = 'INC'
+  var DEC = 'DEC'
+  var SET = 'SET'
 
-  t.deepEqual( actions, {
-    INC: 'INC',
-    DEC: 'DEC',
-    SET: 'SET'
-  } )
-
-  var store = Fluxury.createStore('MapStore', {}, function(state, action) {
+  var store = fluxury.createStore('MapStore', {}, function(state, action) {
     switch (action.type) {
       case SET:
       // combine both objects into a single new object
@@ -38,22 +30,22 @@ test( 'fluxury', function(t) {
 
   var listenerCount = 0;
   store.addListener( () => listenerCount++ )
-  Fluxury.dispatch(SET, { foo: 1, bar: 2 })
+  fluxury.dispatch(SET, { foo: 1, bar: 2 })
   t.deepEqual(store.getState(), { foo: 1, bar: 2 })
   t.equal(store.getFoo(), 1)
   t.equal(store.getBar(), 2)
-  Fluxury.dispatch(SET, { foo: 2 })
+  fluxury.dispatch(SET, { foo: 2 })
   t.deepEqual(store.getState(), { foo: 2, bar: 2 })
-  Fluxury.dispatch(SET, { hey: ['ho', 'let\'s', 'go'] })
+  fluxury.dispatch(SET, { hey: ['ho', 'let\'s', 'go'] })
   t.deepEqual(store.getState(), { foo: 2, bar: 2, hey: ['ho', 'let\'s', 'go'] })
-  Fluxury.dispatch(SET, { foo: 3 })
+  fluxury.dispatch(SET, { foo: 3 })
   t.deepEqual(store.getState(), { foo: 3, bar: 2, hey: ['ho', 'let\'s', 'go'] })
   t.deepEqual(store.filterHey('go'), ['go']);
   t.deepEqual(store.filterNotHey('go'), ['ho', 'let\'s']);
   // ensure that callback is invoked correct number of times
   t.equal(listenerCount, 4);
 
-  var store = Fluxury.createStore('CountStore', 0, function(state, action) {
+  var store = fluxury.createStore('CountStore', 0, function(state, action) {
     switch (action.type) {
       case INC:
       return state+1;
@@ -64,36 +56,32 @@ test( 'fluxury', function(t) {
     }
   });
 
-  Fluxury.dispatch(INC)
+  fluxury.dispatch(INC)
   t.equal(store.getState(), 1)
 
-  Fluxury.dispatch(INC)
+  fluxury.dispatch(INC)
   t.equal(store.getState(), 2)
 
-  Fluxury.dispatch(DEC)
+  fluxury.dispatch(DEC)
   t.equal(store.getState(), 1)
 
-  Fluxury.dispatch(DEC)
+  fluxury.dispatch(DEC)
   t.equal(store.getState(), 0)
 
   t.deepEqual( Object.keys(store), ['name', 'dispatchToken', 'addListener', 'getState'] );
 })
 
 test('ImmutableMapStore', function(t) {
-  var Fluxury = require('./lib/index'),
-  dispatch = Fluxury.dispatch
+  t.plan(9)
+
+  var fluxury = require('./lib/index'),
+  dispatch = fluxury.dispatch
   SET = 'SET',
   Immutable = require('immutable');
 
-  var store = Fluxury.createStore('MapStore', Immutable.Map(), function(state, action) {
-    t.plan(9)
-    switch (action.type) {
-      case SET:
-      // combine both objects into a single new object
-      return state.merge(action.data);
-      default:
-      return state;
-    }
+  // For when switch cases seem like overkill.
+  var store = fluxury.createStore('MapStore', Immutable.Map(), {
+    SET: (state, action) => state.merge(action.data)
   }, {
     get: (state, param) => state.get(param),
     has: (state, param) => state.has(param),
@@ -119,6 +107,8 @@ test('ImmutableMapStore', function(t) {
   dispatch(SET, { states: ['CA', 'OR', 'WA'] })
   dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
   dispatch(SET, { selectedState: 'CA' })
+
+  console.log( store.getState() )
 
   t.deepEqual( store.get('states').toJS(), ['CA', 'OR', 'WA']  );
   t.deepEqual( store.get('programs').toJS(), [{ name: 'A', states: ['CA']}] );
