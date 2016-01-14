@@ -9,21 +9,20 @@ npm install --save fluxury
 ```
 
 ```js
-import {dispatch, createActions, createStore} from 'fluxury'
+import {dispatch, createStore} from 'fluxury'
 ```
 
 ## The Gist
 
-This library adds 3 functions to Facebook's flux implementation to guide you into the `(state, action) -> state` pattern.
+This library adds 2 functions to Facebook's flux implementation to guide you into the `(state, action) -> state` pattern.
 
 In flux@2.1, Facebook added 3 new abstract ES 2015 classes (FluxMapStore -> FluxReduceStore -> FluxStore). These stores guide you into the reducer pattern but, unfortunately, they also lead you into classes. This library reimplements the FluxReduceStore in Douglas Crockford's class-free object oriented programming style. The FluxMapStore can be implemented using defensive copies or with immutable data structures. Examples for both techniques are included below.
 
 This library is similar to Reflux and Redux except that this library doesn't try to replace the dispatcher with a new implementation. The library encourages you into simple patterns but doesn't try to change the core concepts. The flux/Dispatcher and fbemitter/EventEmitter modules are the key to Flux and this project depends directly on Facebook's implementations.  
 
-This new "Flux framework" adds a surface area of 3 new functions:
+This new "Flux framework" adds a surface area of 2 new functions:
 
   - dispatch
-  - createActions
   - createStore
 
 Enjoy!
@@ -45,102 +44,39 @@ Enjoy!
     dispatch({ actionType: 'move', mode: 'off the rails' })
     ```
 
-  2. createActions(action1, action2, ..., actionN)
-
-    Create your actions from a list of strings as `arguments`.
-
-    _MyActions.js_
-    ```js
-    import {createActions} from 'fluxury';
-
-    export default createActions('INC', 'DEC', 'SET')
-    ```
-
-    This returns a key mirrored object. The key and the value are equal. It is a useful JS hack.
-
-    ```js
-    {
-      INC: 'INC',
-      DEC: 'DEC',
-      SET: 'SET'
-    }
-    ```
-
-    To use the action in a React component:
-
-    ```js
-    import {INC} from './MyActions'
-
-    var React = require('react');
-    var {dispatch} = require('fluxury');
-    var PropTypes = React.PropTypes;
-
-    var MyComponent = React.createClass({
-
-      handleClick: function() {
-        /* Call dispatch to submit the action to the stores */
-        dispatch(INC)
-      },
-
-      render: function() {
-        return (
-          <button onClick={this.handleClick}>+1</button>
-        );
-      }
-
-    });
-
-    module.exports = MyComponent;
-
-    ```
-
   3. createStore(name, initialState, reducer, methods)
 
     Create a new store with a name, initialState, reducer function and an object with methods that maybe used to operate state.
 
     ```js
-    import {INC} from './MyActions'
+    // actions
+    const INC = 'INC'
+
+    // fluxury magic
     import {createStore} from 'fluxury';
 
+    // a simple counting store
     export default createStore('CountStore', 0, (state, action) => {
       switch (action.type)
       case INC:
         return state + 1;
       default:
         return state;
-    }, {
-      getCount: (state) => state // state is the count itself!
     })
     ```
 
-    In addition to the state and action the reducer function sends the waitFor as the third argument. This allows stores to express dependencies on data in other stores and ensure that their reducers are executed prior to continuing execution. This ensures that the correct order of operation is performed.
+    If you do not prefer the switch boilerplate then you may specify an object with reducers.
 
     ```js
-    import {loadMessage} from './MyActions'
+    const INC = 'INC'
     import {createStore} from 'fluxury';
 
-    const MessageStore = createStore('MessageStore', [], function(state, action) {
-        switch(action.type) {
-          case loadMessage:
-            return state.concat(action.message)
-          default:
-            return state
-        }
+    export default createStore('CountStore', 0, {
+      INC: (state) => state + 1
     })
-
-    const MessageCountStore = createStore( 'MessageCountStore', 0,
-      function(state, action, waitFor) {
-        // ensure that MessageStore reducer is executed before continuing
-        waitFor([MessageStore.dispatchToken])
-        switch(action.type) {
-          case loadMessage:
-            return state+1
-          default:
-            return state
-        }
-      }
-    )
     ```
+
+    In addition to the state and action the reducer function receives _waitFor_ as the third argument. The waitFor function can be used to enforce the order in store updates. See Facebook Flux documentation for more information.
 
 ## Store Properties and Methods
 
@@ -154,21 +90,15 @@ Enjoy!
 ## Put it all together
 
 ```js
+const {INC, DEC} = ['INC', 'DEC'];
 var React = require('react');
-var {dispatch, createStore, createActions} = require('fluxury');
-var {INC, DEC} = createActions('INC', 'DEC');
+var {dispatch, createStore} = require('fluxury');
 var PureRenderMixin = require('react-addons-pure-render-mixin');
 
 
-var countStore = createStore('CountStore', 0, function(state, action) {
-  switch (action.type) {
-    case INC:
-      return state+1;
-    case DEC:
-      return state-1;
-    default:
-      return state;
-  }
+var countStore = createStore('CountStore', 0, {
+  INC: (state) => state + 1,
+  DEC: (state) => state - 1
 });
 
 var MyComponent = React.createClass({
@@ -218,17 +148,11 @@ module.exports = MyComponent;
 A simple store that accumulates  data on each `SET` action.
 
 ```js
-var {dispatch, createStore, createActions } = require('fluxury');
-var {SET} = createActions('SET');
+const SET = 'SET';
+var {dispatch, createStore } = require('fluxury');
 
-var store = createStore('MapStore', {}, function(state, action) {
-  switch (action.type) {
-    case SET:
-      // combine both objects into a single new object
-      return Object.assign({}, state, action.data)
-    default:
-      return state;
-  }
+var store = createStore('MapStore', {}, {
+  SET: (state) => Object.assign({}, state, action.data)
 }, {
   getStates: (state) => state.states,
   getPrograms: (state) => state.programs,
@@ -253,19 +177,12 @@ dispatch(SET, { selectedState: 'CA' })
 Here is a similar MapStore with Immutable.js.
 
 ```js
-var {dispatch, createStore, createActions } = require('fluxury');
-var {SET, DELETE} = createActions('SET', 'DELETE');
+const {SET, DELETE} = ['SET', 'DELETE'];
+var {dispatch, createStore } = require('fluxury');
 var {Map} = require('Immutable');
 
-var store = createStore('MapStore', Map(), function(state, action) {
-  t.plan(8)
-  switch (action.type) {
-    case SET:
-      // combine both objects into a single new object
-      return state.merge(action.data);
-    default:
-      return state;
-  }
+var store = createStore('MapStore', Map(), {
+  SET: (state) => state.merge(action.data)
 }, {
   get: (state, param) => state.get(param),
   has: (state, param) => state.has(param),
@@ -275,7 +192,3 @@ var store = createStore('MapStore', Map(), function(state, action) {
   all: (state) => state.toJS(),
 });
 ```
-
-## Example Applications
-
-[CSV File Viewer](https://github.com/petermoresi/react-csv-file-viewer)
