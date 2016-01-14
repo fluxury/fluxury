@@ -1,4 +1,4 @@
-/* Fluxury - Copyright 2015 Peter W Moresi */
+/* fluxury - Copyright 2015 Peter Moresi */
 import {EventEmitter} from 'fbemitter';
 import {Dispatcher} from 'flux';
 
@@ -71,18 +71,24 @@ export default Object.freeze({
     }
   },
 
-  /* transform a list of actions into key-mirrored object */
-  createActions: function(...actions) {
-    return Object.freeze(actions.reduce(function(a,b) {
-      a[b] = b;
-      return a;
-    }, {}));
-  },
-
   /* create a named store with an initialState and a reducer to move it forward */
   createStore: function(name, initialState, reducer, methods={}) {
     var currentState = Object.freeze(initialState);
     var emitter = new EventEmitter();
+
+    if (typeof reducer === 'object') {
+      var reducers = Object.freeze(reducer)
+      console.log('foo')
+      reducer = ((state, action) => {
+        console.log( action, methods )
+        if (action && typeof action.type === 'string' && reducers.hasOwnProperty(action.type)) {
+          console.log('foo2')
+
+          return reducers[action.type](state, action);
+        }
+        return state;
+      })
+    }
 
     return Object.freeze(Object.assign({
       name: name,
@@ -107,4 +113,5 @@ export default Object.freeze({
       return Object.assign({}, a, newFunc)
     }, {})));
   }
+
 });
