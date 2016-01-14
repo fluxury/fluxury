@@ -74,6 +74,9 @@ Enjoy!
     export default createStore('CountStore', 0, {
       INC: (state) => state + 1
     })
+
+    // To trigger an increment action use:
+    // dispatch('INC') or dispatch({ type: 'INC' })
     ```
 
     In addition to the state and action the reducer function receives _waitFor_ as the third argument. The waitFor function can be used to enforce the order in store updates. See Facebook Flux documentation for more information.
