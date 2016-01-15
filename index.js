@@ -78,12 +78,8 @@ export default Object.freeze({
 
     if (typeof reducer === 'object') {
       var reducers = Object.freeze(reducer)
-      console.log('foo')
       reducer = ((state, action) => {
-        console.log( action, methods )
         if (action && typeof action.type === 'string' && reducers.hasOwnProperty(action.type)) {
-          console.log('foo2')
-
           return reducers[action.type](state, action);
         }
         return state;
@@ -100,6 +96,9 @@ export default Object.freeze({
         }
       } ),
       addListener: function(cb) {
+        if (typeof cb !== 'function') {
+          throw "Callback must be a function";
+        }
         return emitter.addListener(changedEvent, cb)
       },
       getState: function(cb) {
