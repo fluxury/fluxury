@@ -194,3 +194,4 @@ var store = createStore('MapStore', Map(), {
   all: (state) => state.toJS(),
 });
 ```
+# general-store
