@@ -77,6 +77,8 @@ Enjoy!
 
     // To trigger an increment action use:
     // dispatch('INC') or dispatch({ type: 'INC' })
+    // Additionally you can use this form then sugar methods are added:
+    // CountStore.INC()
     ```
 
     In addition to the state and action the reducer function receives _waitFor_ as the third argument. The waitFor function can be used to enforce the order in store updates. See Facebook Flux documentation for more information.
@@ -95,9 +97,7 @@ Enjoy!
 ```js
 const {INC, DEC} = ['INC', 'DEC'];
 var React = require('react');
-var {dispatch, createStore} = require('fluxury');
-var PureRenderMixin = require('react-addons-pure-render-mixin');
-
+var {createStore} = require('fluxury');
 
 var countStore = createStore('CountStore', 0, {
   INC: (state) => state + 1,
@@ -105,8 +105,6 @@ var countStore = createStore('CountStore', 0, {
 });
 
 var MyComponent = React.createClass({
-
-  mixins: [PureRenderMixin],
 
   componentDidMount: function() {
     this.token = countStore.addListener( this.handleStoreChange );
@@ -122,12 +120,12 @@ var MyComponent = React.createClass({
 
   handleUpClick: function() {
     /* Call dispatch to submit the action to the stores */
-    dispatch(INC)
+    countStore.INC())
   },
 
   handleDownClick: function() {
     /* Call dispatch to submit the action to the stores */
-    dispatch(DEC)
+    countStore.DEC()
   },
 
   render: function() {
@@ -154,7 +152,7 @@ A simple store that accumulates  data on each `SET` action.
 const SET = 'SET';
 var {dispatch, createStore } = require('fluxury');
 
-var store = createStore('MapStore', {}, {
+var mapStore = createStore('MapStore', {}, {
   SET: (state) => Object.assign({}, state, action.data)
 }, {
   getStates: (state) => state.states,
@@ -168,7 +166,8 @@ dispatch(SET, { states: ['CA', 'OR', 'WA'] })
 dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
 // store.getPrograms() => { programs: [{ name: 'A', states: ['CA']}] }
 
-dispatch(SET, { selectedState: 'CA' })
+// or use the sugar:
+mapStore.SET({ selectedState: 'CA' })
 // store.getSelectedState() => 'CA'
 
 // store.getState() => { states: ['CA', 'OR', 'WA'], { states: ['CA', 'OR', 'WA'], programs: [{ name: 'A', states: ['CA']}] }, selectedState: 'CA' }

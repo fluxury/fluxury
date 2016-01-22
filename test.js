@@ -2,12 +2,11 @@ var test = require('tape');
 
 test( 'fluxury', function(t) {
   var fluxury = require('./lib/index.js')
-  t.plan(18)
+  t.plan(17)
 
   t.equal(typeof fluxury, 'object')
   t.equal(typeof fluxury.createStore, 'function')
   t.equal(typeof fluxury.dispatch, 'function')
-  t.equal( Object.isFrozen(fluxury), true)
 
   var INC = 'INC'
   var DEC = 'DEC'
@@ -68,11 +67,11 @@ test( 'fluxury', function(t) {
   fluxury.dispatch(DEC)
   t.equal(store.getState(), 0)
 
-  t.deepEqual( Object.keys(store), ['name', 'dispatchToken', 'addListener', 'getState'] );
+  t.deepEqual( Object.keys(store).sort(), ['name', 'dispatchToken', 'addListener', 'getState'].sort() );
 })
 
 test('ImmutableMapStore', function(t) {
-  t.plan(9)
+  t.plan(10)
 
   var fluxury = require('./lib/index'),
   dispatch = fluxury.dispatch
@@ -91,24 +90,25 @@ test('ImmutableMapStore', function(t) {
     all: (state) => state.toJS(),
   });
 
+  t.equal(typeof store.SET, 'function')
+
   t.deepEqual( Object.keys(store), [
-    'name',
-    'dispatchToken',
-    'addListener',
-    'getState',
     'get',
     'has',
     'includes',
     'first',
     'last',
-    'all']
-  );
+    'all',
+    'SET',
+    'name',
+    'dispatchToken',
+    'addListener',
+    'getState'
+  ]);
 
   dispatch(SET, { states: ['CA', 'OR', 'WA'] })
   dispatch(SET, { programs: [{ name: 'A', states: ['CA']}] })
   dispatch(SET, { selectedState: 'CA' })
-
-  console.log( store.getState() )
 
   t.deepEqual( store.get('states').toJS(), ['CA', 'OR', 'WA']  );
   t.deepEqual( store.get('programs').toJS(), [{ name: 'A', states: ['CA']}] );
