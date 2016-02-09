@@ -153,7 +153,7 @@ const SET = 'SET';
 var {dispatch, createStore } = require('fluxury');
 
 var mapStore = createStore('MapStore', {}, {
-  SET: (state) => Object.assign({}, state, action.data)
+  SET: (state, action) => Object.assign({}, state, action.data)
 }, {
   getStates: (state) => state.states,
   getPrograms: (state) => state.programs,
