@@ -58,88 +58,80 @@ let dispatcher = new Dispatcher(),
 changedEvent = 'change',
 waitFor = dispatcher.waitFor.bind(dispatcher);
 
-var fluxury = Object.freeze({
+export function dispatch(type, data) {
+  if (typeof type === 'string') {
+    dispatcher.dispatch({ type: type, data: data })
+  } else if (typeof type === 'object') {
+    dispatcher.dispatch(type)
+  } else {
+    throw "type must be string or object"
+  }
+}
 
-  /* thin bridge to internal dispatcher */
-  dispatch: function(type, data) {
-    if (typeof type === 'string') {
-      dispatcher.dispatch({ type: type, data: data })
-    } else if (typeof type === 'object') {
-      dispatcher.dispatch(type)
-    } else {
-      throw "type must be string or object"
-    }
-  },
+export function createStore(name, initialState, reducer, methods={}) {
+  var currentState = Object.freeze(initialState);
+  var emitter = new EventEmitter();
+  let actions = {};
+  let reduce = undefined;
 
-  /* create a named store with an initialState and a reducer to move it forward */
-  createStore: function(name, initialState, reducer, methods={}) {
-    var currentState = Object.freeze(initialState);
-    var emitter = new EventEmitter();
-    let actions = {};
-    let reduce = undefined;
+  if (typeof reducer === 'object') {
 
-    if (typeof reducer === 'object') {
-
-      // construct a reduce method with the object
-      reduce = ((state, action) => {
-        if (action && typeof action.type === 'string' && reducer.hasOwnProperty(action.type)) {
-          return reducer[action.type](state, action);
-        }
-        return state;
-      })
-
-      // create helpful action methods
-      actions = Object.keys(reducer)
-      .reduce((a, b) => {
-        a[b] = (data) => dispatcher.dispatch({
-          type: b,
-          data: data
-        })
-        return a;
-      }, {})
-
-    } else if (typeof reducer === 'function') {
-      reduce = reducer
-    } else {
-      throw new Error('reducer must be object or function')
-    }
-
-    let boundMethods = Object.keys(methods).reduce(function(a, b, i) {
-      var newFunc = {};
-      newFunc[b] = function(...params) {
-        return methods[b](currentState, ...params);
+    // construct a reduce method with the object
+    reduce = ((state, action) => {
+      if (action && typeof action.type === 'string' && reducer.hasOwnProperty(action.type)) {
+        return reducer[action.type](state, action, waitFor);
       }
-      return Object.assign(a, newFunc)
+      return state;
+    })
+
+    // create helpful action methods
+    actions = Object.keys(reducer)
+    .reduce((a, b) => {
+      a[b] = (data) => dispatcher.dispatch({
+        type: b,
+        data: data
+      })
+      return a;
     }, {})
 
-    return Object.freeze(
-      Object.assign(
-        {},
-        boundMethods,
-        actions,
-        {
-          name: name,
-          dispatchToken: dispatcher.register( function(action) {
-            var newState = reduce(currentState, action, waitFor);
-            if (currentState !== newState) {
-              currentState = Object.freeze(newState);
-              emitter.emit(changedEvent);
-            }
-          }),
-          addListener: function(cb) {
-            if (typeof cb !== 'function') {
-              throw "Callback must be a function";
-            }
-            return emitter.addListener(changedEvent, cb)
-          },
-          getState: function(cb) {
-            return currentState;
-          }
-        }
-      )
-    );
+  } else if (typeof reducer === 'function') {
+    reduce = reducer
+  } else {
+    throw new Error('reducer must be object or function')
   }
-});
 
-exports.dispatch = fluxury.dispatch;
-exports.createStore = fluxury.createStore;
+  let boundMethods = Object.keys(methods).reduce(function(a, b, i) {
+    var newFunc = {};
+    newFunc[b] = function(...params) {
+      return methods[b](currentState, ...params);
+    }
+    return Object.assign(a, newFunc)
+  }, {})
+
+  return Object.freeze(
+    Object.assign(
+      {},
+      boundMethods,
+      actions,
+      {
+        name: name,
+        dispatchToken: dispatcher.register( function(action) {
+          var newState = reduce(currentState, action, waitFor);
+          if (currentState !== newState) {
+            currentState = Object.freeze(newState);
+            emitter.emit(changedEvent);
+          }
+        }),
+        addListener: function(cb) {
+          if (typeof cb !== 'function') {
+            throw "Callback must be a function";
+          }
+          return emitter.addListener(changedEvent, cb)
+        },
+        getState: function(cb) {
+          return currentState;
+        }
+      }
+    )
+  );
+}
