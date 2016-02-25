@@ -80,7 +80,7 @@ test('ImmutableMapStore', function(t) {
 
   // For when switch cases seem like overkill.
   var store = fluxury.createStore('MapStore', Immutable.Map(), {
-    SET: (state, action) => state.merge(action.data)
+    SET: (state, data) => state.merge(data)
   }, {
     get: (state, param) => state.get(param),
     has: (state, param) => state.has(param),

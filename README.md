@@ -1,6 +1,6 @@
 # fluxury
 
-[![Circle CI](https://circleci.com/gh/fluxury/fluxury/tree/master.svg?style=svg)](https://circleci.com/gh/fluxury/fluxury/tree/master)
+[![Circle CI](https://circleci.com/gh/FunctionFoundry/fluxury/tree/master.svg?style=svg)](https://circleci.com/gh/fluxury/fluxury/tree/master)
 
 Quick start:
 
@@ -95,7 +95,6 @@ Enjoy!
 ## Put it all together
 
 ```js
-const {INC, DEC} = ['INC', 'DEC'];
 var React = require('react');
 var {createStore} = require('fluxury');
 
@@ -153,7 +152,7 @@ const SET = 'SET';
 var {dispatch, createStore } = require('fluxury');
 
 var mapStore = createStore('MapStore', {}, {
-  SET: (state, action) => Object.assign({}, state, action.data)
+  SET: (state, data) => Object.assign({}, state, data)
 }, {
   getStates: (state) => state.states,
   getPrograms: (state) => state.programs,
@@ -184,7 +183,7 @@ var {dispatch, createStore } = require('fluxury');
 var {Map} = require('Immutable');
 
 var store = createStore('MapStore', Map(), {
-  SET: (state) => state.merge(action.data)
+  SET: (state, data) => state.merge(data)
 }, {
   get: (state, param) => state.get(param),
   has: (state, param) => state.has(param),
