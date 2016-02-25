@@ -79,7 +79,7 @@ export function createStore(name, initialState, reducer, methods={}) {
     // construct a reduce method with the object
     reduce = ((state, action) => {
       if (action && typeof action.type === 'string' && reducer.hasOwnProperty(action.type)) {
-        return reducer[action.type](state, action, waitFor);
+        return reducer[action.type](state, action.data, waitFor);
       }
       return state;
     })
