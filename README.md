@@ -178,12 +178,11 @@ mapStore.SET({ selectedState: 'CA' })
 Here is a similar MapStore with Immutable.js.
 
 ```js
-const {SET, DELETE} = ['SET', 'DELETE'];
 var {dispatch, createStore } = require('fluxury');
 var {Map} = require('Immutable');
 
 var store = createStore('MapStore', Map(), {
-  SET: (state, data) => state.merge(data)
+  set: (state, data) => state.merge(data)
 }, {
   get: (state, param) => state.get(param),
   has: (state, param) => state.has(param),
