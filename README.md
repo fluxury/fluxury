@@ -16,12 +16,14 @@ import {dispatch, createStore} from 'fluxury'
 
 This library adds 2 functions to Facebook's flux implementation to guide you into the `(state, action) -> state` pattern. This library forks Flux 2.0.2.
 
-This library is similar to Reflux and Redux except that this library doesn't try to replace the dispatcher with a new implementation. The library encourages you into simple patterns but doesn't try to change the core concepts. The flux/Dispatcher and fbemitter/EventEmitter modules are the key to Flux and this project depends directly on Facebook's implementations.  
+This library is similar to Reflux and Redux except that this library doesn't try to eliminate the dispatcher concept.
 
-This new "Flux framework" adds a surface area of 2 new functions:
+This Flux flavor adds a surface area of 2 new functions:
 
   - dispatch(action) or dispatch(type, data)
   - createStore(name, actionHandler, selectors) or createStore(name, defaultValue, actionHandler, selectors)
+
+You may see that this is compatible with Redux. Please see [Fluxury-Redux](https://github.com/FunctionFoundry/fluxury-redux) for integration.
 
 Enjoy!
 
