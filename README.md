@@ -14,16 +14,16 @@ import {dispatch, createStore} from 'fluxury'
 
 ## The Gist
 
-This library adds 2 functions to Facebook's flux implementation to guide you into the `(state, action) -> state` pattern.
+This library adds 2 functions to Facebook's flux implementation to guide you into the `(state, action) -> state` pattern. This library forks Flux 2.0.2.
 
-In flux@2.1, Facebook added 3 new abstract ES 2015 classes (FluxMapStore -> FluxReduceStore -> FluxStore). These stores guide you into the reducer pattern but, unfortunately, they also lead you into classes. This library reimplements the FluxReduceStore in Douglas Crockford's class-free object oriented programming style. The FluxMapStore can be implemented using defensive copies or with immutable data structures. Examples for both techniques are included below.
+This library is similar to Reflux and Redux except that this library doesn't try to eliminate the dispatcher concept.
 
-This library is similar to Reflux and Redux except that this library doesn't try to replace the dispatcher with a new implementation. The library encourages you into simple patterns but doesn't try to change the core concepts. The flux/Dispatcher and fbemitter/EventEmitter modules are the key to Flux and this project depends directly on Facebook's implementations.  
+This Flux flavor adds a surface area of 2 new functions:
 
-This new "Flux framework" adds a surface area of 2 new functions:
+  - dispatch(action) or dispatch(type, data)
+  - createStore(name, actionHandler, selectors) or createStore(name, defaultValue, actionHandler, selectors)
 
-  - dispatch
-  - createStore
+You may see that this is compatible with Redux. Please see [Fluxury-Redux](https://github.com/FunctionFoundry/fluxury-redux) for integration.
 
 Enjoy!
 
@@ -56,7 +56,7 @@ Enjoy!
     import {createStore} from 'fluxury';
 
     // a simple counting store
-    export default createStore('CountStore', 0, (state, action) => {
+    export default createStore('CountStore', (state=0, action) => {
       switch (action.type)
       case INC:
         return state + 1;
@@ -71,14 +71,14 @@ Enjoy!
     const INC = 'INC'
     import {createStore} from 'fluxury';
 
-    export default createStore('CountStore', 0, {
-      INC: (state) => state + 1
-    })
-
-    // To trigger an increment action use:
-    // dispatch('INC') or dispatch({ type: 'INC' })
-    // Additionally you can use this form then sugar methods are added:
-    // CountStore.INC()
+    export default createStore(
+      'Count Store',
+      0,
+      {
+        increment: (state) => state + 1,
+        decrement: (state) => state + 1
+      }
+    )
     ```
 
     In addition to the state and action the reducer function receives _waitFor_ as the third argument. The waitFor function can be used to enforce the order in store updates. See Facebook Flux documentation for more information.
@@ -99,8 +99,8 @@ var React = require('react');
 var {createStore} = require('fluxury');
 
 var countStore = createStore('CountStore', 0, {
-  INC: (state) => state + 1,
-  DEC: (state) => state - 1
+  increment: (state) => state + 1,
+  decrement: (state) => state - 1
 });
 
 var MyComponent = React.createClass({
@@ -119,12 +119,12 @@ var MyComponent = React.createClass({
 
   handleUpClick: function() {
     /* Call dispatch to submit the action to the stores */
-    countStore.INC())
+    countStore.increment())
   },
 
   handleDownClick: function() {
     /* Call dispatch to submit the action to the stores */
-    countStore.DEC()
+    countStore.decrement()
   },
 
   render: function() {

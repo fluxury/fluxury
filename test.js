@@ -12,7 +12,9 @@ test( 'fluxury', function(t) {
   var DEC = 'DEC'
   var SET = 'SET'
 
-  var store = fluxury.createStore('MapStore', {}, function(state, action) {
+  var store = fluxury.createStore('MapStore', function(state, action) {
+    state = typeof state === 'undefined' ? {} : state
+
     switch (action.type) {
       case SET:
       // combine both objects into a single new object
@@ -128,7 +130,7 @@ test('waitFor works correctly', function(t) {
   var dispatch = require('./lib/index').dispatch
   var dispatchCount = 0;
 
-  t.plan(10)
+  t.plan(12)
 
   var MessageStore = createStore('MessageStore', [], function(state, action) {
     switch(action.type) {
@@ -152,9 +154,12 @@ test('waitFor works correctly', function(t) {
   }
 )
 
-MessageStore.addListener(function() {
+var token = MessageStore.addListener(function() {
   dispatchCount += 1
 })
+
+t.equals( typeof token, 'object')
+t.equals( typeof token.remove, 'function')
 
 dispatch('loadMessage', 'Test')
 t.equals(MessageStore.getState().length, 1)
@@ -166,11 +171,13 @@ t.equals(MessageStore.getState().length, 2)
 t.equals(MessageCountStore.getState(), 2)
 t.deepEqual(MessageStore.getState(), ['Test', 'Test2'])
 
+token.remove()
+
 dispatch('loadMessage', 'Test3')
 t.equals(MessageStore.getState().length, 3)
 t.equals(MessageCountStore.getState(), 3)
 t.deepEqual(MessageStore.getState(), ['Test', 'Test2', 'Test3'])
 
-t.equal(dispatchCount, 3)
+t.equal(dispatchCount, 2)
 
 })
