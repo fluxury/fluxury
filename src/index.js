@@ -141,12 +141,12 @@ export function createStore(name, initialState, reducer, methods={}) {
 
           count += 1
 
-          return () => ({
+          return {
             id: count,
             remove: () => {
-              emitter.removeLister('changed', cb)
+              emitter.removeListener('changed', cb)
             }
-          })
+          }
         },
         getState: function(cb) {
           return currentState;
