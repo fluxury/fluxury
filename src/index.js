@@ -1,6 +1,8 @@
 /* fluxury - Copyright 2015 Peter Moresi */
-import {EventEmitter} from 'fbemitter';
-import {Dispatcher} from 'flux';
+var EventEmitter = require( 'events' ).EventEmitter;
+var Dispatcher = require('./Dispatcher');
+
+let count = 0;
 
 /*
 Object.assign polyfill copied from MDN
@@ -55,7 +57,6 @@ if (!Object.freeze) {
 }
 
 let dispatcher = new Dispatcher(),
-changedEvent = 'change',
 waitFor = dispatcher.waitFor.bind(dispatcher);
 
 export function dispatch(type, data) {
@@ -128,14 +129,24 @@ export function createStore(name, initialState, reducer, methods={}) {
           var newState = reduce(currentState, action, waitFor);
           if (currentState !== newState) {
             currentState = Object.freeze(newState);
-            emitter.emit(changedEvent);
+            emitter.emit('changed');
           }
         }),
         addListener: function(cb) {
           if (typeof cb !== 'function') {
             throw "Callback must be a function";
           }
-          return emitter.addListener(changedEvent, cb)
+
+          emitter.addListener('changed', cb)
+
+          count += 1
+
+          return () => ({
+            id: count,
+            remove: () => {
+              emitter.removeLister('changed', cb)
+            }
+          })
         },
         getState: function(cb) {
           return currentState;
