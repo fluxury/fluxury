@@ -14,9 +14,7 @@ import {dispatch, createStore} from 'fluxury'
 
 ## The Gist
 
-This library adds 2 functions to Facebook's flux implementation to guide you into the `(state, action) -> state` pattern.
-
-In flux@2.1, Facebook added 3 new abstract ES 2015 classes (FluxMapStore -> FluxReduceStore -> FluxStore). These stores guide you into the reducer pattern but, unfortunately, they also lead you into classes. This library reimplements the FluxReduceStore in Douglas Crockford's class-free object oriented programming style. The FluxMapStore can be implemented using defensive copies or with immutable data structures. Examples for both techniques are included below.
+This library adds 2 functions to Facebook's flux implementation to guide you into the `(state, action) -> state` pattern. This library forks Flux 2.0.2.
 
 This library is similar to Reflux and Redux except that this library doesn't try to replace the dispatcher with a new implementation. The library encourages you into simple patterns but doesn't try to change the core concepts. The flux/Dispatcher and fbemitter/EventEmitter modules are the key to Flux and this project depends directly on Facebook's implementations.  
 
