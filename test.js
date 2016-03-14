@@ -12,7 +12,9 @@ test( 'fluxury', function(t) {
   var DEC = 'DEC'
   var SET = 'SET'
 
-  var store = fluxury.createStore('MapStore', {}, function(state, action) {
+  var store = fluxury.createStore('MapStore', function(state, action) {
+    state = typeof state === 'undefined' ? {} : state
+
     switch (action.type) {
       case SET:
       // combine both objects into a single new object
