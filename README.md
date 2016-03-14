@@ -22,8 +22,8 @@ This library is similar to Reflux and Redux except that this library doesn't try
 
 This new "Flux framework" adds a surface area of 2 new functions:
 
-  - dispatch
-  - createStore
+  - dispatch(action) or dispatch(type, data)
+  - createStore(name, actionHandler, selectors) or createStore(name, defaultValue, actionHandler, selectors)
 
 Enjoy!
 
@@ -56,7 +56,7 @@ Enjoy!
     import {createStore} from 'fluxury';
 
     // a simple counting store
-    export default createStore('CountStore', 0, (state, action) => {
+    export default createStore('CountStore', (state=0, action) => {
       switch (action.type)
       case INC:
         return state + 1;
@@ -71,14 +71,14 @@ Enjoy!
     const INC = 'INC'
     import {createStore} from 'fluxury';
 
-    export default createStore('CountStore', 0, {
-      INC: (state) => state + 1
-    })
-
-    // To trigger an increment action use:
-    // dispatch('INC') or dispatch({ type: 'INC' })
-    // Additionally you can use this form then sugar methods are added:
-    // CountStore.INC()
+    export default createStore(
+      'Count Store',
+      0,
+      {
+        increment: (state) => state + 1,
+        decrement: (state) => state + 1
+      }
+    )
     ```
 
     In addition to the state and action the reducer function receives _waitFor_ as the third argument. The waitFor function can be used to enforce the order in store updates. See Facebook Flux documentation for more information.
@@ -99,8 +99,8 @@ var React = require('react');
 var {createStore} = require('fluxury');
 
 var countStore = createStore('CountStore', 0, {
-  INC: (state) => state + 1,
-  DEC: (state) => state - 1
+  increment: (state) => state + 1,
+  decrement: (state) => state - 1
 });
 
 var MyComponent = React.createClass({
@@ -119,12 +119,12 @@ var MyComponent = React.createClass({
 
   handleUpClick: function() {
     /* Call dispatch to submit the action to the stores */
-    countStore.INC())
+    countStore.increment())
   },
 
   handleDownClick: function() {
     /* Call dispatch to submit the action to the stores */
-    countStore.DEC()
+    countStore.decrement()
   },
 
   render: function() {
