@@ -42,7 +42,7 @@ It is compatible with Redux. Please see [Fluxury-Redux](https://github.com/Funct
 
   3. createStore(name, initialState, reducer, methods)
 
-    Create a new store with a name, initialState, reducer function and an object with methods that maybe used to operate state.
+    Creating a store is to Flux what creating a class is to React.
 
     ```js
     // actions
