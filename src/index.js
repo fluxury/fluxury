@@ -148,6 +148,9 @@ export function createStore(name, initialState, reducer, methods={}) {
             }
           }
         },
+        replaceState: function(state) {
+          currentState = state;
+        }, 
         getState: function(cb) {
           return currentState;
         }

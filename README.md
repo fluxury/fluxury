@@ -89,6 +89,7 @@ It is compatible with Redux. Please see [Fluxury-Redux](https://github.com/Funct
 | dispatchToken | A number used with waitFor |
 | addListener | A function to add a callback for events |
 | getState | A function that returns the current state |
+| replaceState | Replace the state; use with caution |
 
 ## Put it all together
 
