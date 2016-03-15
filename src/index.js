@@ -72,7 +72,7 @@ export function dispatch(type, data) {
 export function createStore(name, initialState, reducer, methods={}) {
   var currentState = (
     typeof initialState !== 'function' ?
-    Object.freeze(initialState) :
+    (typeof initialState === 'object' ? Object.freeze(initialState) : initialState) :
     Object.freeze({}));
 
   var emitter = new EventEmitter();
