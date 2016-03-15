@@ -14,7 +14,7 @@ import {dispatch, createStore} from 'fluxury'
 
 ## The Gist
 
-This library forks Flux 2.0.2; pushing you into the (state, action) -> state pattern.
+This library forks Flux 2.0.2; pushing you into the `(state, action) -> state` pattern.
 
 This Flux fork focuses around 2 functions:
 
