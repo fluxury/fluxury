@@ -27,7 +27,7 @@ It is compatible with Redux. Please see [Fluxury-Redux](https://github.com/Funct
 
   1. dispatch( type, data ) or dispatch( action )
 
-    Submit an action into the stores. You must specify the type and, optionally, some data.
+    Submit an action into the stores.
 
     ```js
     import {dispatch} from 'fluxury';
