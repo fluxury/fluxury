@@ -128,7 +128,7 @@ export function createStore(name, initialState, reducer, methods={}) {
         dispatchToken: dispatcher.register( function(action) {
           var newState = reduce(currentState, action, waitFor);
           if (currentState !== newState) {
-            currentState = Object.freeze(newState);
+            currentState = typeof newState === 'object' ? Object.freeze(newState) : newState;
             emitter.emit('changed');
           }
         }),
