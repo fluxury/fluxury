@@ -21,6 +21,8 @@ This Flux fork focuses around 2 functions:
   - dispatch(action) or dispatch(type, data)
   - createStore(name, actionHandler, selectors) or createStore(name, defaultValue, actionHandler, selectors)
 
+Of course it is compatible with React. Please see [React-Fluxury](https://github.com/FunctionFoundry/react-fluxury) for more information.
+
 It is compatible with Redux. Please see [Fluxury-Redux](https://github.com/FunctionFoundry/fluxury-redux) for integration.
 
 ## API Reference
