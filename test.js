@@ -1,7 +1,8 @@
 var test = require('tape');
+var fluxury = require('./lib/index.js')
+var createStore = fluxury.createStore
 
 test( 'fluxury', function(t) {
-  var fluxury = require('./lib/index.js')
   t.plan(17)
 
   t.equal(typeof fluxury, 'object')
@@ -70,6 +71,27 @@ test( 'fluxury', function(t) {
   t.equal(store.getState(), 0)
 
   t.deepEqual( Object.keys(store).sort(), ['name', 'dispatchToken', 'addListener', 'getState'].sort() );
+})
+
+test('CountStore', function(t) {
+  // ensure store with non-object initialState handled correctly
+
+  var MessageCountStore = createStore(
+    'Message Count Store',
+    0,
+    {
+      receiveMessage: (count) => count + 1
+    }
+  )
+
+  t.plan(3)
+
+  t.equals(MessageCountStore.getState(), 0)
+  MessageCountStore.receiveMessage('Hello')
+  t.equals(MessageCountStore.getState(), 1)
+  MessageCountStore.receiveMessage('Hello')
+  t.equals(MessageCountStore.getState(), 2)
+
 })
 
 test('ImmutableMapStore', function(t) {
