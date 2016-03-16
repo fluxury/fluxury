@@ -107,7 +107,7 @@ var countStore = createStore('CountStore', 0, {
 var MyComponent = React.createClass({
 
   componentDidMount: function() {
-    this.token = countStore.addListener( this.handleStoreChange );
+    this.token = countStore.subscribe( this.handleStoreChange );
   },
 
   componentWillUnmount: function() {
