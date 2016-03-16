@@ -154,7 +154,7 @@ export function createStore(name, initialState, reducer, methods={}) {
           currentState = state }: undefined),
         replaceReducer: ((process.env.NODE_ENV === 'development') ? (reducer) => {
           reduce = reducer }: undefined),
-        dispatch: (...action) => dispatch(action),
+        dispatch: (...action) => dispatch(...action),
         getState: function(cb) {
           return currentState;
         }

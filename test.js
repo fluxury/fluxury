@@ -42,7 +42,7 @@ test( 'fluxury', function(t) {
   t.deepEqual(store.getState(), { foo: 2, bar: 2 })
   fluxury.dispatch(SET, { hey: ['ho', 'let\'s', 'go'] })
   t.deepEqual(store.getState(), { foo: 2, bar: 2, hey: ['ho', 'let\'s', 'go'] })
-  fluxury.dispatch(SET, { foo: 3 })
+  store.dispatch(SET, { foo: 3 })
   t.deepEqual(store.getState(), { foo: 3, bar: 2, hey: ['ho', 'let\'s', 'go'] })
   t.deepEqual(store.filterHey('go'), ['go']);
   t.deepEqual(store.filterNotHey('go'), ['ho', 'let\'s']);
