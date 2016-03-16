@@ -74,7 +74,7 @@ It is compatible with Redux. Please see [Fluxury-Redux](https://github.com/Funct
       0,
       {
         increment: (state) => state + 1,
-        decrement: (state) => state + 1
+        decrement: (state) => state - 1
       }
     )
     ```
