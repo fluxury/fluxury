@@ -33,7 +33,7 @@ test( 'fluxury', function(t) {
   });
 
   var listenerCount = 0;
-  store.addListener( () => listenerCount++ )
+  store.subscribe( () => listenerCount++ )
   fluxury.dispatch(SET, { foo: 1, bar: 2 })
   t.deepEqual(store.getState(), { foo: 1, bar: 2 })
   t.equal(store.getFoo(), 1)
@@ -72,7 +72,7 @@ test( 'fluxury', function(t) {
   fluxury.dispatch(DEC)
   t.equal(store.getState(), 0)
 
-  t.deepEqual( Object.keys(store).sort(), ['name', 'dispatchToken', 'addListener', 'replaceState', 'getState'].sort() );
+  t.deepEqual( Object.keys(store).sort(),  [ 'dispatch', 'dispatchToken', 'getState', 'name', 'replaceReducer', 'replaceState', 'subscribe' ].sort() );
 })
 
 test('CountStore', function(t) {
@@ -133,8 +133,10 @@ test('ImmutableMapStore', function(t) {
     'SET',
     'name',
     'dispatchToken',
-    'addListener',
+    'subscribe',
     'replaceState',
+    'replaceReducer',
+    'dispatch',
     'getState'
   ]);
 
@@ -184,7 +186,7 @@ test('waitFor works correctly', function(t) {
   }
 )
 
-var token = MessageStore.addListener(function() {
+var token = MessageStore.subscribe(function() {
   dispatchCount += 1
 })
 

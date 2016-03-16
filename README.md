@@ -86,10 +86,12 @@ It is compatible with Redux. Please see [Fluxury-Redux](https://github.com/Funct
 | name | comment |
 |---------|------|
 | name | The name supplied when creating the store |
+| dispatch | Another method to access the dispatch function |
 | dispatchToken | A number used with waitFor |
-| addListener | A function to add a callback for events |
+| subscribe | A function to register listeners |
 | getState | A function that returns the current state |
 | replaceState | Replace the state; development only |
+| replaceReducer | Replace the reducer; development only |
 
 ## Put it all together
 

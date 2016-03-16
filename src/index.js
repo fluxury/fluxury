@@ -134,7 +134,7 @@ export function createStore(name, initialState, reducer, methods={}) {
             emitter.emit('changed');
           }
         }),
-        addListener: function(cb) {
+        subscribe: function(cb) {
           if (typeof cb !== 'function') {
             throw "Callback must be a function";
           }
@@ -150,9 +150,11 @@ export function createStore(name, initialState, reducer, methods={}) {
             }
           }
         },
-        replaceState: ((process.env.NODE_ENV === 'development') ? () => {
-          currentState = state }: undefined)
-        ,
+        replaceState: ((process.env.NODE_ENV === 'development') ? (state) => {
+          currentState = state }: undefined),
+        replaceReducer: ((process.env.NODE_ENV === 'development') ? (reducer) => {
+          reduce = reducer }: undefined),
+        dispatch: (...action) => dispatch(action),
         getState: function(cb) {
           return currentState;
         }
