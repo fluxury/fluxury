@@ -13,6 +13,8 @@ test( 'fluxury', function(t) {
   var DEC = 'DEC'
   var SET = 'SET'
 
+  process.env.NODE_ENV = 'development'
+
   var store = fluxury.createStore('MapStore', function(state, action) {
     state = typeof state === 'undefined' ? {} : state
 
@@ -95,12 +97,14 @@ test('CountStore', function(t) {
 })
 
 test('ImmutableMapStore', function(t) {
-  t.plan(10)
+  t.plan(11)
 
   var fluxury = require('./lib/index'),
-  dispatch = fluxury.dispatch
+  dispatch = fluxury.dispatch,
   SET = 'SET',
   Immutable = require('immutable');
+
+  process.env.NODE_ENV = 'prod'
 
   // For when switch cases seem like overkill.
   var store = fluxury.createStore('MapStore', Immutable.Map(), {
@@ -114,6 +118,9 @@ test('ImmutableMapStore', function(t) {
     all: (state) => state.toJS(),
   });
 
+  // should only be when
+  console.log(process.env.NODE_ENV === 'development' )
+  t.equal(typeof store.replaceState, 'undefined')
   t.equal(typeof store.SET, 'function')
 
   t.deepEqual( Object.keys(store), [

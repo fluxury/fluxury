@@ -1,4 +1,6 @@
 /* fluxury - Copyright 2015 Peter Moresi */
+"use strict";
+
 var EventEmitter = require( 'events' ).EventEmitter;
 var Dispatcher = require('./Dispatcher');
 
@@ -148,9 +150,9 @@ export function createStore(name, initialState, reducer, methods={}) {
             }
           }
         },
-        replaceState: function(state) {
-          currentState = state;
-        },
+        replaceState: ((process.env.NODE_ENV === 'development') ? () => {
+          currentState = state }: undefined)
+        ,
         getState: function(cb) {
           return currentState;
         }
