@@ -143,11 +143,8 @@ export function createStore(name, initialState, reducer, methods={}) {
 
           count += 1
 
-          return {
-            id: count,
-            remove: () => {
-              emitter.removeListener('changed', cb)
-            }
+          return () => {
+            emitter.removeListener('changed', cb)
           }
         },
         replaceState: ((process.env.NODE_ENV === 'development') ? (state) => {

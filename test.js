@@ -162,7 +162,7 @@ test('waitFor works correctly', function(t) {
   var dispatch = require('./lib/index').dispatch
   var dispatchCount = 0;
 
-  t.plan(12)
+  t.plan(11)
 
   var MessageStore = createStore('MessageStore', [], function(state, action) {
     switch(action.type) {
@@ -186,12 +186,11 @@ test('waitFor works correctly', function(t) {
   }
 )
 
-var token = MessageStore.subscribe(function() {
+var unsubscribe = MessageStore.subscribe(function() {
   dispatchCount += 1
 })
 
-t.equals( typeof token, 'object')
-t.equals( typeof token.remove, 'function')
+t.equals( typeof unsubscribe, 'function')
 
 dispatch('loadMessage', 'Test')
 t.equals(MessageStore.getState().length, 1)
@@ -203,7 +202,7 @@ t.equals(MessageStore.getState().length, 2)
 t.equals(MessageCountStore.getState(), 2)
 t.deepEqual(MessageStore.getState(), ['Test', 'Test2'])
 
-token.remove()
+unsubscribe()
 
 dispatch('loadMessage', 'Test3')
 t.equals(MessageStore.getState().length, 3)
