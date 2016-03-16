@@ -70,7 +70,7 @@ test( 'fluxury', function(t) {
   fluxury.dispatch(DEC)
   t.equal(store.getState(), 0)
 
-  t.deepEqual( Object.keys(store).sort(), ['name', 'dispatchToken', 'addListener', 'getState'].sort() );
+  t.deepEqual( Object.keys(store).sort(), ['name', 'dispatchToken', 'addListener', 'replaceState', 'getState'].sort() );
 })
 
 test('CountStore', function(t) {
@@ -127,6 +127,7 @@ test('ImmutableMapStore', function(t) {
     'name',
     'dispatchToken',
     'addListener',
+    'replaceState',
     'getState'
   ]);
 
