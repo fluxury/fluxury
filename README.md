@@ -39,7 +39,7 @@ It is compatible with Redux. Please see [Fluxury-Redux](https://github.com/Funct
     // or with data
     dispatch('LOAD_SETTINGS', { a: 1, b: 2 }) // => { type: 'LOAD_SETTINGS', data: { a: 1, b: 2 } }
     // or with a custom object
-    dispatch({ actionType: 'move', mode: 'off the rails' })
+    dispatch({ type: 'move', mode: 'off the rails' })
     ```
 
   3. createStore(name, initialState, reducer, methods)
