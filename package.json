@@ -1,14 +1,15 @@
 {
   "name": "fluxury",
-  "version": "1.3.1",
-  "description": "Add luxury sugar to simplify implementing Facebook's flavor of Flux architecture.",
-  "main": "./lib/index.js",
-  "jsnext:main": "index.js",
+  "version": "2.0.0",
+  "description": "High level store builder for Flux architecture",
+  "main": "./lib/fluxury.js",
+  "jsnext:main": "./lib/fluxury.es6",
   "scripts": {
-    "build": "babel src/invariant.js -o lib/invariant.js && babel src/Dispatcher.js -o lib/Dispatcher.js && babel src/index.js -o lib/index.js",
-    "bundle": "browserify -g uglifyify ./lib/index.js > dist/fluxury.js",
-    "test": "node test",
-    "all": "npm run build && npm test && npm run bundle"
+    "build": "rollup src/index.js > lib/fluxury.es6 && babel lib/fluxury.es6 -o lib/fluxury.js && browserify -g uglifyify ./browserify.js > dist/fluxury.js",
+    "test": "node test"
+  },
+  "engines": {
+    "node": ">=6.0"
   },
   "author": "Peter Moresi",
   "license": "MIT",
@@ -19,6 +20,7 @@
     "babel-preset-es2015": "^6.1.2",
     "browserify": "^13.0.0",
     "immutable": "^3.7.5",
+    "rollup": "^0.34.10",
     "tape": "^4.2.2",
     "uglifyify": "^3.0.1",
     "webpack": "^1.12.9"

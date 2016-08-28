@@ -1,8 +1,8 @@
 /* fluxury - Copyright 2015 Peter Moresi */
 "use strict";
 
-var EventEmitter = require( 'events' ).EventEmitter;
-var Dispatcher = require('./Dispatcher');
+import {EventEmitter} from 'events';
+import Dispatcher from './Dispatcher';
 
 let count = 0;
 
@@ -71,33 +71,32 @@ export function dispatch(type, data) {
   }
 }
 
-export function createStore(name, initialState, reducer, methods={}) {
-  var currentState = (
-    typeof initialState !== 'function' ?
-    (typeof initialState === 'object' ? Object.freeze(initialState) : initialState) :
-    Object.freeze({}));
+export function createStore(reducerOrConfig, selectors={}) {
 
+  let currentState;
   var emitter = new EventEmitter();
   let actions = {};
   let reduce = undefined;
+  let noop = () => {}
 
-  if (typeof initialState === 'function') {
-    methods = reducer
-    reducer = initialState
-  }
+  if (typeof reducerOrConfig === 'function') {
+    currentState = reducerOrConfig(undefined, {}, noop)
+    reduce = reducerOrConfig
+  } else if (typeof reducerOrConfig === 'object') {
 
-  if (typeof reducer === 'object') {
+    currentState = typeof reducerOrConfig.getInitialState === 'function' ?
+    reducerOrConfig.getInitialState(undefined, {}, noop) : undefined;
 
     // construct a reduce method with the object
     reduce = ((state, action) => {
-      if (action && typeof action.type === 'string' && reducer.hasOwnProperty(action.type)) {
-        return reducer[action.type](state, action.data, waitFor);
+      if (action && typeof action.type === 'string' && reducerOrConfig.hasOwnProperty(action.type)) {
+        return reducerOrConfig[action.type](state, action.data, waitFor);
       }
       return state;
     })
 
     // create helpful action methods
-    actions = Object.keys(reducer)
+    actions = Object.keys(reducerOrConfig)
     .reduce((a, b) => {
       a[b] = (data) => dispatcher.dispatch({
         type: b,
@@ -106,16 +105,14 @@ export function createStore(name, initialState, reducer, methods={}) {
       return a;
     }, {})
 
-  } else if (typeof reducer === 'function') {
-    reduce = reducer
   } else {
-    throw new Error('reducer must be object or function')
+    throw new Error('first argument must be object or function', reducerOrConfig)
   }
 
-  let boundMethods = Object.keys(methods).reduce(function(a, b, i) {
+  let boundMethods = Object.keys(selectors).reduce(function(a, b, i) {
     var newFunc = {};
     newFunc[b] = function(...params) {
-      return methods[b](currentState, ...params);
+      return selectors[b](currentState, ...params);
     }
     return Object.assign(a, newFunc)
   }, {})
@@ -126,7 +123,6 @@ export function createStore(name, initialState, reducer, methods={}) {
       boundMethods,
       actions,
       {
-        name: name,
         dispatchToken: dispatcher.register( function(action) {
           var newState = reduce(currentState, action, waitFor);
           if (currentState !== newState) {
@@ -147,10 +143,8 @@ export function createStore(name, initialState, reducer, methods={}) {
             emitter.removeListener('changed', cb)
           }
         },
-        replaceState: ((process.env.NODE_ENV === 'development') ? (state) => {
-          currentState = state }: undefined),
-        replaceReducer: ((process.env.NODE_ENV === 'development') ? (reducer) => {
-          reduce = reducer }: undefined),
+        reduce: (state, action) => reduce(state, action, waitFor),
+        setState: (state) => { currentState = state },
         dispatch: (...action) => dispatch(...action),
         getState: function(cb) {
           return currentState;
@@ -158,4 +152,83 @@ export function createStore(name, initialState, reducer, methods={}) {
       }
     )
   );
+}
+
+// Compose
+export function composeStore(...spec) {
+
+  function isMappedObject(...spec) {
+    return (spec.length === 1 &&
+      typeof spec[0] === 'object' &&
+      typeof spec[0].getState === 'undefined')
+  }
+
+  function getState(isMapped, ...spec) {
+
+    if (isMappedObject(...spec)) {
+      return Object.keys(spec[0]).reduce((acc, key) => {
+        acc[key] = spec[0][key].getState()
+        return acc;
+      }, {})
+    }
+
+    return spec.map(n => n.getState())
+  }
+
+  function getStores(isMapped, ...spec) {
+    if (isMapped) {
+        return Object.keys(spec[0]).reduce((acc, key) => acc.concat(spec[0][key]), [])
+    } else {
+      spec.forEach( store => {
+        if (typeof store.getState !== 'function') {
+          if (console && console.log) {
+            console.log('ERROR: invalid store')
+          }
+        }
+      })
+      return spec
+    }
+  }
+
+  let isMapped = isMappedObject(...spec)
+  let defaultState = getState(isMapped, ...spec)
+  let stores = getStores(isMapped, ...spec)
+
+  let dispatchTokens = stores.map(n => n.dispatchToken )
+
+  return createStore(
+    (state=defaultState, action, waitFor) => {
+
+      waitFor(dispatchTokens)
+
+      let newState = getState(isMapped, ...spec)
+
+      if (isMapped){ // object specified
+
+        if ( Object.keys(spec[0]).reduce(
+          (current, key) =>
+          (current && state[key] === newState[key]), true
+        )) {
+          return state;
+        }
+
+      } else { // array specified
+
+        // not changed
+        if (
+          state.length === newState.length &&
+          state.every( (n, i) => n === newState[i] )
+        ) {
+          return state
+        }
+
+      }
+
+      return newState
+
+    },
+    {
+      getState:(state) => getState(isMapped, ...state)
+    }
+  )
 }
