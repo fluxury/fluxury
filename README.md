@@ -1,6 +1,6 @@
 # fluxury
 
-[![Circle CI](https://circleci.com/gh/websitehq/fluxury/tree/master.svg?style=svg)](https://circleci.com/gh/websitehq/fluxury/tree/master)
+[![Circle CI](https://circleci.com/gh/WebsiteHQ/fluxury/tree/master.svg?style=svg)](https://circleci.com/gh/WebsiteHQ/fluxury/tree/master)
 
 Quick start:
 
