@@ -323,12 +323,20 @@ if (!Object.freeze) {
 let dispatcher = new Dispatcher();
 let waitFor = dispatcher.waitFor.bind(dispatcher);
 function dispatch(type, data) {
-  if (typeof type === 'string') {
-    dispatcher.dispatch({ type: type, data: data })
-  } else if (typeof type === 'object') {
-    dispatcher.dispatch(type)
-  } else {
-    throw "type must be string or object"
+  try {
+
+    if (typeof type === 'string') {
+      dispatcher.dispatch({ type: type, data: data })
+    } else if (typeof type === 'object') {
+      dispatcher.dispatch(type)
+    } else {
+      throw "type must be string or object"
+    }
+
+    return Promise.resolve({ type, data })
+
+  } catch(e) {
+    return Promise.reject(e)
   }
 }
 

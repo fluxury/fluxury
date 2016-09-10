@@ -1,6 +1,6 @@
 {
   "name": "fluxury",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "High level store builder for Flux architecture",
   "main": "./lib/fluxury.js",
   "jsnext:main": "./lib/fluxury.es6",
@@ -22,6 +22,7 @@
     "immutable": "^3.7.5",
     "rollup": "^0.34.10",
     "tape": "^4.2.2",
+    "tape-async": "^2.1.1",
     "uglifyify": "^3.0.1",
     "webpack": "^1.12.9"
   },

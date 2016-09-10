@@ -14,17 +14,15 @@ import {dispatch, createStore, composeStore} from 'fluxury'
 
 ## The Gist
 
-This library forks Facbook's Flux (v2.0.2) focusing on ease of use and promoting the `(state, action) => state` made popular by Redux.
+This library forks Facbook's Flux implementation.
 
-This library includes functions:
+This library adds functions:
 
-  - dispatch(type, data) or dispatch(action)
+  - dispatch(type, data) or dispatch(action) returns Promise
   - createStore(reducer, selectors) or createStore(configObjct, selectors)
   - composeStore(...spec)
 
-For react bindings please checkout [react-fluxury](https://github.com/FunctionFoundry/react-fluxury).
-
-For redux bindings please checkout [fluxury-redux](https://github.com/FunctionFoundry/fluxury-redux).
+For react bindings please see [react-fluxury](https://github.com/FunctionFoundry/react-fluxury).
 
 ## API Reference
 

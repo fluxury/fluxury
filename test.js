@@ -1,11 +1,11 @@
-var test = require('tape');
+var test = require('tape-async');
 var fluxury = require('./lib/fluxury')
 var composeStore = fluxury.composeStore
 var createStore = fluxury.createStore
 var dispatch = fluxury.dispatch
 
-test( 'fluxury', function(t) {
-  t.plan(17)
+test( 'fluxury', function* (t) {
+  t.plan(19)
 
   t.equal(typeof fluxury, 'object')
   t.equal(typeof fluxury.createStore, 'function')
@@ -36,7 +36,10 @@ test( 'fluxury', function(t) {
 
   var listenerCount = 0;
   store.subscribe( () => listenerCount++ )
-  fluxury.dispatch(set, { foo: 1, bar: 2 })
+  var result = yield fluxury.dispatch(set, { foo: 1, bar: 2 })
+  t.equal( result.type, set, 'promise should resolve to action with type' )
+  t.deepEqual( result.data, { foo: 1, bar: 2 }, 'promise should resolve to action with data' )
+
   t.deepEqual(store.getState(), { foo: 1, bar: 2 })
   t.equal(store.getFoo(), 1)
   t.equal(store.getBar(), 2)
