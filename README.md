@@ -19,7 +19,7 @@ This library forks Facbook's Flux implementation.
 This library adds functions:
 
   - dispatch(type, data) or dispatch(action) returns Promise
-  - createStore(reducer, selectors) or createStore(configObjct, selectors)
+  - createStore(reducer, selectors) or createStore(configObject, selectors)
   - composeStore(...spec)
 
 For react bindings please see [react-fluxury](https://github.com/FunctionFoundry/react-fluxury).
