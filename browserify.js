@@ -1,3 +1,3 @@
 if (window) {
-  window.fluxury = require('./lib/fluxury')
+  window.pf = require('./lib/pf')
 }

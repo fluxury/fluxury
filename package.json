@@ -1,11 +1,11 @@
 {
-  "name": "fluxury",
-  "version": "2.0.1",
+  "name": "pure-flux",
+  "version": "0.9.99",
   "description": "High level store builder for Flux architecture",
-  "main": "./lib/fluxury.js",
-  "jsnext:main": "./lib/fluxury.es6",
+  "main": "./lib/pf.js",
+  "jsnext:main": "./lib/pf.es6",
   "scripts": {
-    "build": "rollup src/index.js > lib/fluxury.es6 && babel lib/fluxury.es6 -o lib/fluxury.js && browserify -g uglifyify ./browserify.js > dist/fluxury.js",
+    "build": "rollup src/index.js > lib/pf.es6 && babel lib/pf.es6 -o lib/pf.js && browserify -g uglifyify ./browserify.js > dist/pf.js",
     "test": "node test"
   },
   "engines": {
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fluxury/fluxury.git"
+    "url": "git+https://github.com/pf/pf.git"
   },
   "keywords": [
     "react",
@@ -36,7 +36,7 @@
     "flux"
   ],
   "bugs": {
-    "url": "https://github.com/fluxury/fluxury/issues"
+    "url": "https://github.com/pf/pf/issues"
   },
-  "homepage": "https://github.com/fluxury/fluxury#readme"
+  "homepage": "https://github.com/pf/pf#readme"
 }

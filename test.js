@@ -1,15 +1,15 @@
 var test = require('tape-async');
-var fluxury = require('./lib/fluxury')
-var composeStore = fluxury.composeStore
-var createStore = fluxury.createStore
-var dispatch = fluxury.dispatch
+var pf = require('./lib/pf')
+var composeStore = pf.composeStore
+var createStore = pf.createStore
+var dispatch = pf.dispatch
 
-test( 'fluxury', function* (t) {
+test( 'pf', function* (t) {
   t.plan(19)
 
-  t.equal(typeof fluxury, 'object')
-  t.equal(typeof fluxury.createStore, 'function')
-  t.equal(typeof fluxury.dispatch, 'function')
+  t.equal(typeof pf, 'object')
+  t.equal(typeof pf.createStore, 'function')
+  t.equal(typeof pf.dispatch, 'function')
 
   var inc = 'inc'
   var dec = 'dec'
@@ -17,7 +17,7 @@ test( 'fluxury', function* (t) {
 
   process.env.NODE_ENV = 'development'
 
-  var store = fluxury.createStore((state, action) => {
+  var store = pf.createStore((state, action) => {
     state = typeof state === 'undefined' ? {} : state
 
     switch (action.type) {
@@ -36,16 +36,16 @@ test( 'fluxury', function* (t) {
 
   var listenerCount = 0;
   store.subscribe( () => listenerCount++ )
-  var result = yield fluxury.dispatch(set, { foo: 1, bar: 2 })
+  var result = yield pf.dispatch(set, { foo: 1, bar: 2 })
   t.equal( result.type, set, 'promise should resolve to action with type' )
   t.deepEqual( result.data, { foo: 1, bar: 2 }, 'promise should resolve to action with data' )
 
   t.deepEqual(store.getState(), { foo: 1, bar: 2 })
   t.equal(store.getFoo(), 1)
   t.equal(store.getBar(), 2)
-  fluxury.dispatch(set, { foo: 2 })
+  pf.dispatch(set, { foo: 2 })
   t.deepEqual(store.getState(), { foo: 2, bar: 2 })
-  fluxury.dispatch(set, { hey: ['ho', 'let\'s', 'go'] })
+  pf.dispatch(set, { hey: ['ho', 'let\'s', 'go'] })
   t.deepEqual(store.getState(), { foo: 2, bar: 2, hey: ['ho', 'let\'s', 'go'] })
   store.dispatch(set, { foo: 3 })
   t.deepEqual(store.getState(), { foo: 3, bar: 2, hey: ['ho', 'let\'s', 'go'] })
@@ -54,7 +54,7 @@ test( 'fluxury', function* (t) {
   // ensure that callback is invoked correct number of times
   t.equal(listenerCount, 4);
 
-  var store = fluxury.createStore((state=0, action) => {
+  var store = pf.createStore((state=0, action) => {
     switch (action.type) {
       case inc:
       return state+1;
@@ -65,16 +65,16 @@ test( 'fluxury', function* (t) {
     }
   });
 
-  fluxury.dispatch(inc)
+  pf.dispatch(inc)
   t.equal(store.getState(), 1)
 
-  fluxury.dispatch(inc)
+  pf.dispatch(inc)
   t.equal(store.getState(), 2)
 
-  fluxury.dispatch(dec)
+  pf.dispatch(dec)
   t.equal(store.getState(), 1)
 
-  fluxury.dispatch(dec)
+  pf.dispatch(dec)
   t.equal(store.getState(), 0)
 
   t.deepEqual( Object.keys(store).sort(),  [ 'dispatch', 'dispatchToken', 'getState', 'reduce', 'setState', 'subscribe' ].sort() );
@@ -101,13 +101,13 @@ test('CountStore', function(t) {
 test('ImmutableMapStore', function(t) {
   t.plan(11)
 
-  var dispatch = fluxury.dispatch,
+  var dispatch = pf.dispatch,
   Immutable = require('immutable');
 
   process.env.NODE_ENV = 'prod'
 
   // For when switch cases seem like overkill.
-  var store = fluxury.createStore({
+  var store = pf.createStore({
     getInitialState: () => Immutable.Map(),
     set: (state, data) => state.merge(data)
   }, {

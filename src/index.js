@@ -1,4 +1,4 @@
-/* fluxury - Copyright 2015 Peter Moresi */
+/* pure-flux - Copyright 2015 Peter Moresi */
 "use strict";
 
 import {EventEmitter} from 'events';

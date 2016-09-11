@@ -1,15 +1,15 @@
-# fluxury
+# pf
 
-[![Circle CI](https://circleci.com/gh/WebsiteHQ/fluxury/tree/master.svg?style=svg)](https://circleci.com/gh/WebsiteHQ/fluxury/tree/master)
+[![Circle CI](https://circleci.com/gh/WebsiteHQ/pure-flux/tree/master.svg?style=svg)](https://circleci.com/gh/WebsiteHQ/pure-flux/tree/master)
 
 Quick start:
 
 ```sh
-npm install --save fluxury
+npm install --save pure-flux
 ```
 
 ```js
-import {dispatch, createStore, composeStore} from 'fluxury'
+import {dispatch, createStore, composeStore} from 'pure-flux'
 ```
 
 ## The Gist
@@ -22,7 +22,7 @@ This library adds functions:
   - createStore(reducer, selectors) or createStore(configObject, selectors)
   - composeStore(...spec)
 
-For react bindings please see [react-fluxury](https://github.com/FunctionFoundry/react-fluxury).
+For react bindings please see [react-pure-flux](https://github.com/FunctionFoundry/react-pure-flux).
 
 ## API Reference
 
@@ -31,7 +31,7 @@ For react bindings please see [react-fluxury](https://github.com/FunctionFoundry
     Dispatch an action to all stores.
 
     ```js
-    import {dispatch} from 'fluxury';
+    import {dispatch} from 'pure-flux';
 
     // dispatch an action with a string
     dispatch('requestSettings')  // => { type: 'loadSettings', data: undefined }
@@ -47,7 +47,7 @@ For react bindings please see [react-fluxury](https://github.com/FunctionFoundry
 
     ```js
     const inc = 'inc'
-    import {createStore} from 'fluxury';
+    import {createStore} from 'pure-flux';
 
     // a simple counting store
     var countStore = createStore((state=0, action, waitFor) => {
@@ -66,7 +66,7 @@ For react bindings please see [react-fluxury](https://github.com/FunctionFoundry
 
     ```js
     const inc = 'inc'
-    import {createStore} from 'fluxury';
+    import {createStore} from 'pure-flux';
 
     export default createStore({
       getInitialState: () => 0
@@ -105,7 +105,7 @@ For react bindings please see [react-fluxury](https://github.com/FunctionFoundry
 
 ```js
 var React = require('react');
-var {createStore} = require('fluxury');
+var {createStore} = require('pure-flux');
 
 var messageStore = createStore({
   getInitialState: () => [],
