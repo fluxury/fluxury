@@ -1,4 +1,4 @@
-# pf
+# pure-flux
 
 [![Circle CI](https://circleci.com/gh/WebsiteHQ/pure-flux/tree/master.svg?style=svg)](https://circleci.com/gh/WebsiteHQ/pure-flux/tree/master)
 
@@ -100,57 +100,3 @@ For react bindings please see [react-pure-flux](https://github.com/FunctionFound
 | getState | A function that returns the current state |
 | setState | Replace the current store state |
 | reduce | Run the reduce directly |
-
-## Put it all together
-
-```js
-var React = require('react');
-var {createStore} = require('pure-flux');
-
-var messageStore = createStore({
-  getInitialState: () => [],
-  addMessage: (state) => state + 1,
-});
-
-var messageCountStore = createStore({
-  getInitialState: () => 0,
-  addMessage: (state, data, waitFor) => {
-    waitFor([messageStore.dispatchToken])
-    return state + 1
-  }
-});
-
-var MyComponent = React.createClass({
-
-  componentDidMount: function() {
-    this.unsubscribe = messageCountStore.subscribe( this.handleStoreChange );
-  },
-
-  componentWillUnmount: function() {
-    this.unsubscribe();
-  },
-
-  handleStoreChange: function() {
-    this.setState({ count: messageCountStore.getState() })
-  },
-
-  handleAdd: function() {
-    /* Call dispatch to submit the action to the stores */
-    messageStore.addMessage(this.refs.message_text.value)
-  },
-
-
-  render: function() {
-    return (
-      <div>
-        <p>{this.state.count}</p>
-        <input ref="message_text">
-        <button onClick={this.handleAdd}>Add</button>
-      </div>
-    );
-  }
-
-});
-
-module.exports = MyComponent;
-```
