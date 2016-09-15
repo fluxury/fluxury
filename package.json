@@ -1,7 +1,7 @@
 {
   "name": "pure-flux",
-  "version": "0.9.99",
-  "description": "High level store builder for Flux architecture",
+  "version": "0.11.0",
+  "description": "Pure function Flux implementation",
   "main": "./lib/pf.js",
   "jsnext:main": "./lib/pf.es6",
   "scripts": {
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pf/pf.git"
+    "url": "git+https://github.com/WebsiteHQ/pure-flux.git"
   },
   "keywords": [
     "react",
@@ -36,7 +36,7 @@
     "flux"
   ],
   "bugs": {
-    "url": "https://github.com/pf/pf/issues"
+    "url": "https://github.com/WebsiteHQ/pure-flux/issues"
   },
-  "homepage": "https://github.com/pf/pf#readme"
+  "homepage": "https://github.com/WebsiteHQ/pure-flux#readme"
 }
