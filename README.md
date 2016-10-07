@@ -49,7 +49,7 @@ require('core-js/fn/object/keys');
 
 ## API
 
-### dispatch( type, data ) or dispatch( action )
+### dispatch( type, data ) or dispatch( action ) or dispatch( Promise )
 
 Dispatch an action to the stores.
 
@@ -60,8 +60,12 @@ import {dispatch} from 'pure-flux';
 dispatch('requestSettings')  // => { type: 'loadSettings', data: undefined }
 // or with data
 dispatch('loadSettings', { a: 1, b: 2 }) // => { type: 'loadSettings', data: { a: 1, b: 2 } }
+
 // or with a custom object
 dispatch({ type: 'move', mode: 'over rails' })
+
+// or dispatch an async action with a Promise
+dispatch( Promise.resolve({ type: 'move', mode: 'over rails' }) )
 ```
 
 ### createStore(name, reducer, selectors)

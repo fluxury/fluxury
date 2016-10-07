@@ -23,21 +23,21 @@ function isPromise(object) {
   return typeof object === 'object' && typeof object.then === 'function'
 }
 
-export function dispatch(action, ...data) {
+export function dispatch(action, data) {
   try {
 
     if (isPromise(action)) {
-      return action(...data)
+      return action
       .then(result => {
-        dispatcher.dispatch(result)
-        return Promise.resolve(action, ...data)
+        dispatch(result)
+        return Promise.resolve(result)
       })
     } else if (typeof action === 'object') {
       dispatcher.dispatch(action)
       return Promise.resolve(action)
     } else if (typeof action === 'string') {
-      dispatcher.dispatch({ type: action, data: data[0] })
-      return Promise.resolve({ type: action, data: data[0] })
+      dispatcher.dispatch({ type: action, data: data })
+      return Promise.resolve({ type: action, data: data })
     } else {
       return Promise.reject('Invalid action!')
     }

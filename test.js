@@ -160,7 +160,7 @@ test('ImmutableMapStore', function(t) {
 
 })
 
-test('waitFor, compose and events works correctly', function(t) {
+test('waitFor, compose and events works correctly', function* (t) {
 
   var dispatchCount = 0, dispatchCount2 = 0;
 
@@ -230,7 +230,8 @@ test('waitFor, compose and events works correctly', function(t) {
 
   unsubscribe()
 
-  dispatch('loadMessage', 'Test3')
+  var result = yield dispatch( Promise.resolve({ type: 'loadMessage', data: 'Test3'}) )
+
   t.equals(MessageStore.getState().length, 3)
   t.equals(MessageCountStore.getState(), 3)
   t.deepEqual(MessageStore.getState(), ['Test', 'Test2', 'Test3'])

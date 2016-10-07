@@ -1,6 +1,6 @@
 {
   "name": "pure-flux",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "Pure function Flux implementation",
   "main": "./lib/index.js",
   "scripts": {
