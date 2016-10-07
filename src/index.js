@@ -1,169 +1,167 @@
 /* pure-flux - Copyright 2015 Peter Moresi */
 "use strict";
 
-import {EventEmitter} from 'events';
 import Dispatcher from './Dispatcher';
 
-let count = 0;
-
-/*
-Object.assign polyfill copied from MDN
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
-*/
-if (!Object.assign) {
-  Object.defineProperty(Object, 'assign', {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function(target) {
-      'use strict';
-      if (target === undefined || target === null) {
-        throw new TypeError('Cannot convert first argument to object');
-      }
-
-      var to = Object(target);
-      for (var i = 1; i < arguments.length; i++) {
-        var nextSource = arguments[i];
-        if (nextSource === undefined || nextSource === null) {
-          continue;
-        }
-        nextSource = Object(nextSource);
-
-        var keysArray = Object.keys(nextSource);
-        for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex++) {
-          var nextKey = keysArray[nextIndex];
-          var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
-          if (desc !== undefined && desc.enumerable) {
-            to[nextKey] = nextSource[nextKey];
-          }
-        }
-      }
-      return to;
-    }
-  });
-}
-
-// This is a sham that makes Object.freeze work (insecurely) in ES3 environments
-// ES5 15.2.3.9
-// http://es5.github.com/#x15.2.3.9
-if (!Object.freeze) {
-  Object.freeze = function freeze(object) {
-    if (Object(object) !== object) {
-      throw new TypeError('Object.freeze can only be called on Objects.');
-    }
-    // this is misleading and breaks feature-detection, but
-    // allows "securable" code to "gracefully" degrade to working
-    // but insecure code.
-    return object;
-  };
-}
-
-let dispatcher = new Dispatcher(),
+let rootState = Object.freeze({}),
+stores = {},
+dispatcher = new Dispatcher(),
 waitFor = dispatcher.waitFor.bind(dispatcher);
 
-export function dispatch(type, data) {
+function copyIfSame(current, next) {
+  if (current === next) return current.slice()
+  return next
+}
+
+function updateRootState(name, newState) {
+  var changes = {}
+  changes[name] = typeof newState === 'object' ? Object.freeze(newState) : newState
+  rootState = Object.assign({}, rootState, changes)
+}
+
+function isPromise(object) {
+  return typeof object === 'object' && typeof object.then === 'function'
+}
+
+export function dispatch(action, ...data) {
   try {
 
-    if (typeof type === 'string') {
-      dispatcher.dispatch({ type: type, data: data })
-    } else if (typeof type === 'object') {
-      dispatcher.dispatch(type)
+    if (isPromise(action)) {
+      return action(...data)
+      .then(result => {
+        dispatcher.dispatch(result)
+        return Promise.resolve(action, ...data)
+      })
+    } else if (typeof action === 'object') {
+      dispatcher.dispatch(action)
+      return Promise.resolve(action)
+    } else if (typeof action === 'string') {
+      dispatcher.dispatch({ type: action, data: data[0] })
+      return Promise.resolve({ type: action, data: data[0] })
     } else {
-      throw "type must be string or object"
+      return Promise.reject('Invalid action!')
     }
 
-    return Promise.resolve({ type, data })
 
   } catch(e) {
     return Promise.reject(e)
   }
 }
 
-export function createStore(reducerOrConfig, selectors={}) {
+// construct a reducer method with a spec
+function makeReducer(spec) {
 
-  let currentState;
-  var emitter = new EventEmitter();
-  let actions = {};
-  let reduce = undefined;
-  let noop = () => {}
+  return ((state, action) => {
 
-  if (typeof reducerOrConfig === 'function') {
-    currentState = reducerOrConfig(undefined, {}, noop)
-    reduce = reducerOrConfig
-  } else if (typeof reducerOrConfig === 'object') {
+    // Check if action has definition and run it if available.
+    if (action && typeof action.type === 'string' && spec.hasOwnProperty(action.type)) {
+      return spec[action.type](state, action.data, waitFor);
+    }
 
-    currentState = typeof reducerOrConfig.getInitialState === 'function' ?
-    reducerOrConfig.getInitialState(undefined, {}, noop) : undefined;
+    // Return current state when action has no handler.
+    return state;
 
-    // construct a reduce method with the object
-    reduce = ((state, action) => {
-      if (action && typeof action.type === 'string' && reducerOrConfig.hasOwnProperty(action.type)) {
-        return reducerOrConfig[action.type](state, action.data, waitFor);
-      }
-      return state;
-    })
+  })
+}
 
-    // create helpful action methods
-    actions = Object.keys(reducerOrConfig)
-    .reduce((a, b) => {
-      a[b] = (data) => dispatcher.dispatch({
-        type: b,
-        data: data
-      })
-      return a;
-    }, {})
 
-  } else {
-    throw new Error('first argument must be object or function', reducerOrConfig)
-  }
-
-  let boundMethods = Object.keys(selectors).reduce(function(a, b, i) {
+function bindSelectors(name, selectors) {
+  return Object.keys(selectors).reduce(function(a, b, i) {
     var newFunc = {};
     newFunc[b] = function(...params) {
-      return selectors[b](currentState, ...params);
+      return selectors[b](rootState[name], ...params);
     }
     return Object.assign(a, newFunc)
-  }, {})
+  }, {} )
+}
 
-  return Object.freeze(
-    Object.assign(
-      {},
-      boundMethods,
-      actions,
-      {
-        dispatchToken: dispatcher.register( function(action) {
-          var newState = reduce(currentState, action, waitFor);
-          if (currentState !== newState) {
-            currentState = typeof newState === 'object' ? Object.freeze(newState) : newState;
-            emitter.emit('changed');
-          }
-        }),
-        subscribe: function(cb) {
-          if (typeof cb !== 'function') {
-            throw "Callback must be a function";
-          }
+export function getStores() {
+  return stores
+}
 
-          emitter.addListener('changed', cb)
+export function getStore(name) {
+  return stores[name]
+}
 
-          count += 1
+export function createStore(name, reducer, selectors={}) {
 
-          return () => {
-            emitter.removeListener('changed', cb)
-          }
-        },
-        reduce: (state, action) => reduce(state, action, waitFor),
-        setState: (state) => { currentState = state },
-        dispatch: (...action) => dispatch(...action),
-        getState: function(cb) {
-          return currentState;
-        }
+  if (typeof name !== 'string') throw('Expect name to be string.')
+  if (typeof reducer !== 'function') throw('Expect reducer to be function.')
+  if (typeof selectors !== 'object') throw('Expect selectors to be object.')
+
+  let currentListeners = [],
+  nextListeners = [];
+
+  updateRootState(
+    name,
+    reducer(undefined, {}, () => {})
+  )
+
+  var dispatchToken = dispatcher.register( function(action) {
+    var newState = reducer(rootState[name], action, waitFor);
+    if (rootState[name] !== newState) {
+
+      updateRootState(
+        name,
+        newState
+      )
+
+      // avoid looping over potentially mutating list
+      var listeners = currentListeners = nextListeners
+      for (var i = 0; i < listeners.length; i++) {
+        var listener = listeners[i]
+        listener(action)
       }
-    )
-  );
+    }
+  })
+
+  function subscribe(cb) {
+    if (typeof cb !== 'function') {
+      throw "Listener must be a function";
+    }
+
+    // avoid mutating list that could be iterating during dispatch
+    let subscribed = true;
+    nextListeners = copyIfSame(currentListeners, nextListeners)
+
+    nextListeners.push(cb)
+
+    return () => {
+      if (!subscribed) return
+      subscribed = false
+
+      nextListeners = copyIfSame(currentListeners, nextListeners)
+
+      var index = nextListeners.indexOf(cb)
+      nextListeners.splice(index, 1)
+    }
+  }
+
+  var store = Object.assign(
+    { },
+    bindSelectors(name, selectors),
+    {
+      name,
+      dispatch: (...action) => dispatch(...action),
+      dispatchToken,
+      subscribe,
+      replaceReducer: (newReducer) => reducer = newReducer,
+      setState: (state) => { updateRootState(name, state) },
+      getState: function() {
+        return rootState[name];
+      }
+    }
+  )
+
+
+  if (name !== '__root__') stores[name] = store;
+
+  return store;
+
 }
 
 // Compose
-export function composeStore(...spec) {
+export function composeStore(name, ...spec) {
 
   function isMappedObject(...spec) {
     return (spec.length === 1 &&
@@ -201,42 +199,27 @@ export function composeStore(...spec) {
   let isMapped = isMappedObject(...spec)
   let defaultState = getState(isMapped, ...spec)
   let stores = getStores(isMapped, ...spec)
+  let dirty = false;
 
   let dispatchTokens = stores.map(n => n.dispatchToken )
+  let subscriptions = stores.map(n => n.subscribe( (name, action) => {
+    dirty = true
+  }))
 
   return createStore(
+    name,
     (state=defaultState, action, waitFor) => {
 
       waitFor(dispatchTokens)
 
-      let newState = getState(isMapped, ...spec)
-
-      if (isMapped){ // object specified
-
-        if ( Object.keys(spec[0]).reduce(
-          (current, key) =>
-          (current && state[key] === newState[key]), true
-        )) {
-          return state;
-        }
-
-      } else { // array specified
-
-        // not changed
-        if (
-          state.length === newState.length &&
-          state.every( (n, i) => n === newState[i] )
-        ) {
-          return state
-        }
-
+      if (dirty) {
+        let newState = getState(isMapped, ...spec)
+        dirty = false;
+        return newState
       }
 
-      return newState
+      return state;
 
-    },
-    {
-      getState:(state) => getState(isMapped, ...state)
     }
   )
 }

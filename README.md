@@ -2,101 +2,113 @@
 
 [![Circle CI](https://circleci.com/gh/WebsiteHQ/pure-flux/tree/master.svg?style=svg)](https://circleci.com/gh/WebsiteHQ/pure-flux/tree/master)
 
-Quick start:
+## Overview
+
+A Flux library that promotes the `(state, action) => state` pattern.
+
+This library includes:
+
+  - createStore(name, reducer, selectors)
+  - composeStore(name, ...spec)
+  - dispatch(type, data) or dispatch(action) returns Promise
+  - getStore()
+  - getStores(name)
+
+For react bindings see [react-pure-flux](https://github.com/FunctionFoundry/react-pure-flux).
+
+
+## Quick start
 
 ```sh
 npm install --save pure-flux
 ```
 
 ```js
-import {dispatch, createStore, composeStore} from 'pure-flux'
+import {
+  createStore,
+  composeStore,
+  dispatch,
+  getStores,
+  getStore
+}
+from 'pure-flux'
 ```
 
-## The Gist
+## Polyfills
 
-This library forks Facbook's Flux implementation.
+This library depends on a modern JavaScript runtime. Load a polyfill like in [core-js](https://github.com/zloirock/core-js#commonjs) or [babel-polyfill](http://babeljs.io/docs/usage/polyfill/) to support old browsers.
 
-This library adds functions:
+Install required polyfills with [core-js](https://github.com/zloirock/core-js):
 
-  - dispatch(type, data) or dispatch(action) returns Promise
-  - createStore(reducer, selectors) or createStore(configObject, selectors)
-  - composeStore(...spec)
+```js
+require('core-js/fn/promise');
+require('core-js/fn/object/assign');
+require('core-js/fn/object/freeze');
+require('core-js/fn/object/keys');
+```
 
-For react bindings please see [react-pure-flux](https://github.com/FunctionFoundry/react-pure-flux).
-
-## API Reference
+## API
 
 ### dispatch( type, data ) or dispatch( action )
 
-    Dispatch an action to all stores.
+Dispatch an action to the stores.
 
-    ```js
-    import {dispatch} from 'pure-flux';
+```js
+import {dispatch} from 'pure-flux';
 
-    // dispatch an action with a string
-    dispatch('requestSettings')  // => { type: 'loadSettings', data: undefined }
-    // or with data
-    dispatch('loadSettings', { a: 1, b: 2 }) // => { type: 'loadSettings', data: { a: 1, b: 2 } }
-    // or with a custom object
-    dispatch({ type: 'move', mode: 'over rails' })
-    ```
+// dispatch an action with a string
+dispatch('requestSettings')  // => { type: 'loadSettings', data: undefined }
+// or with data
+dispatch('loadSettings', { a: 1, b: 2 }) // => { type: 'loadSettings', data: { a: 1, b: 2 } }
+// or with a custom object
+dispatch({ type: 'move', mode: 'over rails' })
+```
 
-### createStore(reducerOrConfig, selectors)
+### createStore(name, reducer, selectors)
 
-    Define stores which respond to actions and manage state.
+Define a store which respond to actions by returning the existing state or a new state object.
 
-    ```js
-    const inc = 'inc'
-    import {createStore} from 'pure-flux';
+```js
+const inc = 'inc'
+import {createStore} from 'pure-flux';
 
-    // a simple counting store
-    var countStore = createStore((state=0, action, waitFor) => {
-      switch (action.type)
-      case inc:
-        return state + 1;
-      default:
-        return state;
-    })
-    ```
+// a simple counting store
+var countStore = createStore((state=0, action) => {
+switch (action.type)
+case inc:
+  return state + 1;
+default:
+  return state;
+})
+```
 
-    If you do not prefer the `switch case` then may use a config object.
+_You should not mutate the state object. It is frozen to avoid problems._
 
-    The config object uses the life cycle method `getInitialState` to configure
-    the initial value stored. This should look familiar to React programmers.
+### composeStore(name, ...spec)
 
-    ```js
-    const inc = 'inc'
-    import {createStore} from 'pure-flux';
+Compose two or more stores into composite store with a specification.
 
-    export default createStore({
-      getInitialState: () => 0
-      increment: (state) => state + 1,
-      incrementN: (state, data, waitFor) => state + data,
-      decrement: (state) => state - 1
-    })
-    ```
+```js
+// object spec
+composeStores(
+  "MyCombinedObjectStore", {
+    count: CountStore,
+    message: MessageStore
+  }
+)
 
-    `waitFor` is used to control the order which store process actions.
+// list spec
+composeStores("MyCombinedListStore", CountStore, MessageStore )
+```
 
-### composeStore(...spec)
-
-  Compose one or more stores into composite store.
-
-  The spec may either be an array of stores or an Object with stores.
-
-  ```js
-  composeStores(MessageStore, CountStore)
-  composeStores({ count: CountStore, message: MessageStore })
-  ```
-
-## Store Properties and Methods
+## Store Properties
 
 | name | comment |
 |---------|------|
 | name | The name supplied when creating the store |
-| dispatch | Another method to access the dispatch function |
+| dispatch | Access to dispatch function |
 | dispatchToken | A number used to identity each store |
-| subscribe | Register listener and return a function to remove listener |
-| getState | A function that returns the current state |
-| setState | Replace the current store state |
-| reduce | Run the reduce directly |
+| subscribe | A function to tegister a listener |
+| getState | A function to access state |
+| setState | Replace the store's state |
+| replaceReducer | Replace the store's reducer |

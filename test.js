@@ -1,5 +1,7 @@
 var test = require('tape-async');
-var pf = require('./lib/pf')
+var pf = require('./lib/index')
+var getStores = pf.getStores
+var getStore = pf.getStore
 var composeStore = pf.composeStore
 var createStore = pf.createStore
 var dispatch = pf.dispatch
@@ -17,9 +19,7 @@ test( 'pf', function* (t) {
 
   process.env.NODE_ENV = 'development'
 
-  var store = pf.createStore((state, action) => {
-    state = typeof state === 'undefined' ? {} : state
-
+  var store = pf.createStore("test1SetStore", (state, action) => {
     switch (action.type) {
       case set:
       // combine both objects into a single new object
@@ -54,7 +54,7 @@ test( 'pf', function* (t) {
   // ensure that callback is invoked correct number of times
   t.equal(listenerCount, 4);
 
-  var store = pf.createStore((state=0, action) => {
+  var store = pf.createStore("test1CountStore", (state=0, action) => {
     switch (action.type) {
       case inc:
       return state+1;
@@ -77,29 +77,33 @@ test( 'pf', function* (t) {
   pf.dispatch(dec)
   t.equal(store.getState(), 0)
 
-  t.deepEqual( Object.keys(store).sort(),  [ 'dispatch', 'dispatchToken', 'getState', 'reduce', 'setState', 'subscribe' ].sort() );
+  t.deepEqual( Object.keys(store).sort(),  [ 'dispatch', 'dispatchToken', 'getState', 'name', 'replaceReducer', 'setState', 'subscribe' ].sort() );
+
+
 })
 
 test('CountStore', function(t) {
   // ensure store with non-object initialState handled correctly
 
-  var MessageCountStore = createStore({
-    getInitialState: () => 0,
-    receiveMessage: (count) => count + 1
+  var MessageCountStore = createStore("test2MessageCountStore", (count=0, action) => {
+    switch(action.type) {
+      case 'receiveMessage': return count + 1;
+      default: return count
+    }
   })
 
   t.plan(3)
 
   t.equals(MessageCountStore.getState(), 0)
-  MessageCountStore.receiveMessage('Hello')
+  MessageCountStore.dispatch('receiveMessage', 'Hello')
   t.equals(MessageCountStore.getState(), 1)
-  MessageCountStore.receiveMessage('Hello')
+  MessageCountStore.dispatch('receiveMessage', 'Hello')
   t.equals(MessageCountStore.getState(), 2)
 
 })
 
 test('ImmutableMapStore', function(t) {
-  t.plan(11)
+  t.plan(10)
 
   var dispatch = pf.dispatch,
   Immutable = require('immutable');
@@ -107,9 +111,11 @@ test('ImmutableMapStore', function(t) {
   process.env.NODE_ENV = 'prod'
 
   // For when switch cases seem like overkill.
-  var store = pf.createStore({
-    getInitialState: () => Immutable.Map(),
-    set: (state, data) => state.merge(data)
+  var store = pf.createStore("test3ImmutableMapStore", (state=Immutable.Map(), action) => {
+    switch(action.type) {
+      case 'set': return state.merge(action.data);
+      default: return state
+    }
   }, {
     get: (state, param) => state.get(param),
     has: (state, param) => state.has(param),
@@ -121,7 +127,6 @@ test('ImmutableMapStore', function(t) {
 
   // should only be when
   t.equal(typeof store.replaceState, 'undefined')
-  t.equal(typeof store.set, 'function')
 
   t.deepEqual( Object.keys(store).sort(), [
     'get',
@@ -130,11 +135,10 @@ test('ImmutableMapStore', function(t) {
     'first',
     'last',
     'all',
-    'getInitialState',
-    'set',
     'dispatchToken',
     'subscribe',
-    'reduce',
+    'name',
+    'replaceReducer',
     'setState',
     'dispatch',
     'getState'
@@ -156,13 +160,13 @@ test('ImmutableMapStore', function(t) {
 
 })
 
-test('waitFor and compose works correctly', function(t) {
+test('waitFor, compose and events works correctly', function(t) {
 
-  var dispatchCount = 0;
+  var dispatchCount = 0, dispatchCount2 = 0;
 
-  t.plan(14)
+  t.plan(21) // blackjack!
 
-  var MessageStore = createStore(function(state=[], action) {
+  var MessageStore = createStore("test4MessageStore", function(state=[], action) {
     switch(action.type) {
       case 'loadMessage':
       return state.concat(action.data)
@@ -172,6 +176,7 @@ test('waitFor and compose works correctly', function(t) {
   })
 
   var MessageCountStore = createStore(
+    "test4MessageCountStore",
     function(state=0, action, waitFor) {
       // ensure that MessageStore reducer is executed before continuing
       waitFor([MessageStore.dispatchToken])
@@ -184,10 +189,10 @@ test('waitFor and compose works correctly', function(t) {
     }
   )
 
-  var Combined1 = composeStore(MessageCountStore, MessageStore)
-  var Combined2 = composeStore([MessageCountStore, MessageStore])
+  var Combined1 = composeStore("Combined1", MessageCountStore, MessageStore)
+  var Combined2 = composeStore("Combined2", [MessageCountStore, MessageStore])
 
-  var Combined3 = composeStore({
+  var Combined3 = composeStore("Combined3", {
     count: MessageCountStore,
     messages: MessageStore
   })
@@ -196,17 +201,32 @@ test('waitFor and compose works correctly', function(t) {
     dispatchCount += 1
   })
 
+  var unsubscribe2 = MessageCountStore.subscribe(function() {
+    dispatchCount2 += 1
+  })
+
   t.equals( typeof unsubscribe, 'function')
 
   dispatch('loadMessage', 'Test')
   t.equals(MessageStore.getState().length, 1)
   t.equals(MessageCountStore.getState(), 1)
   t.deepEqual(MessageStore.getState(), ['Test'])
+  t.equal(dispatchCount, 1)
+  t.equal(dispatchCount2, 1)
+
+  dispatch('foo', 'Test')
+
+  t.equal(dispatchCount, 1)
+  t.equal(dispatchCount2, 1)
+
+  unsubscribe2()
 
   dispatch('loadMessage', 'Test2')
   t.equals(MessageStore.getState().length, 2)
   t.equals(MessageCountStore.getState(), 2)
   t.deepEqual(MessageStore.getState(), ['Test', 'Test2'])
+  t.equal(dispatchCount, 2)
+  t.equal(dispatchCount2, 1)
 
   unsubscribe()
 
@@ -220,19 +240,37 @@ test('waitFor and compose works correctly', function(t) {
   t.deepEqual(Combined3.getState(), { count: 3, messages: ['Test', 'Test2', 'Test3'] })
 
   t.equal(dispatchCount, 2)
+  t.equal(dispatchCount2, 1)
 
 })
 
-test('reduce works correctly', function(t) {
+test('check root store', function(t) {
+  t.plan(7)
+  var rootStore = composeStore("master", getStores())
+  t.equal(Object.keys(rootStore.getState()).length, 9)
+  t.equal(getStore("master").name, "master")
 
-  var dispatchCount = 0;
+  var rootStore2 = composeStore("master2", getStores())
+  t.equal(Object.keys(rootStore2.getState()).length, 10)
 
-  t.plan(1)
+  // second time should include itself
+  rootStore2 = composeStore("master2", getStores())
+  t.equal(Object.keys(rootStore2.getState()).length, 11)
 
-  var MessageStore = createStore({
-    loadMessage: (state, data) => state.concat(data)
-  })
+  // third and more makes no difference
+  rootStore2 = composeStore("master2", getStores())
+  t.equal(Object.keys(rootStore2.getState()).length, 11)
 
-  t.deepEqual( MessageStore.reduce(['a'], { type: 'loadMessage', data: ['b'] }), ['a', 'b'])
+  var count = 0;
+
+  var rootListener = rootStore.subscribe(() => count++)
+  dispatch('no-action-here', 'Test3')
+
+  t.equal(count, 0)
+
+  dispatch('loadMessage', 'Test3')
+
+  t.equal(count, 1)
+
 
 })

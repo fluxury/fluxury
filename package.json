@@ -1,11 +1,10 @@
 {
   "name": "pure-flux",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Pure function Flux implementation",
-  "main": "./lib/pf.js",
-  "jsnext:main": "./lib/pf.es6",
+  "main": "./lib/index.js",
   "scripts": {
-    "build": "rollup src/index.js > lib/pf.es6 && babel lib/pf.es6 -o lib/pf.js && browserify -g uglifyify ./browserify.js > dist/pf.js",
+    "build": "gulp",
     "test": "node test"
   },
   "engines": {
@@ -18,9 +17,9 @@
     "babel-core": "^6.1.2",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.1.3",
     "babel-preset-es2015": "^6.1.2",
-    "browserify": "^13.0.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
     "immutable": "^3.7.5",
-    "rollup": "^0.34.10",
     "tape": "^4.2.2",
     "tape-async": "^2.1.1",
     "uglifyify": "^3.0.1",
