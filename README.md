@@ -4,18 +4,22 @@
 
 ## Overview
 
-A Flux library that promotes the `(state, action) => state` pattern.
+A Flux library that promotes `(state, action) => state`.
 
-This library includes:
+It forks [Facebook's Flux](https://facebook.github.io/flux/) v2.0.2 adding functions to define stores, manage state and register listeners.
 
-  - createStore(name, reducer, selectors)
-  - composeStore(name, ...spec)
-  - dispatch(type, data) or dispatch(action) returns Promise
-  - getStore()
-  - getStores(name)
+There is no debate. It is Flux architecture with the original dispatcher hidden behind the curtains.
+
+The library includes:
+
+  - createStore( name, reducerOrSpec, selectors )
+  - composeStore( name, ...spec )
+  - dispatch( action )
+  - getStores( )
+
+For working examples [read the tests](./test.js).
 
 For react bindings see [react-pure-flux](https://github.com/FunctionFoundry/react-pure-flux).
-
 
 ## Quick start
 
@@ -28,8 +32,7 @@ import {
   createStore,
   composeStore,
   dispatch,
-  getStores,
-  getStore
+  getStores
 }
 from 'pure-flux'
 ```
@@ -49,70 +52,124 @@ require('core-js/fn/object/keys');
 
 ## API
 
-### dispatch( type, data ) or dispatch( action ) or dispatch( Promise )
+### dispatch( action )
 
-Dispatch an action to the stores.
+Dispatch action, returns a Promise which may be used to chain actions together.
 
 ```js
-import {dispatch} from 'pure-flux';
+var { dispatch } = require( 'pure-flux' )
 
-// dispatch an action with a string
-dispatch('requestSettings')  // => { type: 'loadSettings', data: undefined }
-// or with data
-dispatch('loadSettings', { a: 1, b: 2 }) // => { type: 'loadSettings', data: { a: 1, b: 2 } }
+// With an object
+dispatch( { type: 'move', data: 'off the rails' } )
+.then( action => console.log('Going', action.data) )
 
-// or with a custom object
-dispatch({ type: 'move', mode: 'over rails' })
+// With a Promise
+dispatch( Promise.resolve({ type: 'get', mode: 'off the juice' }) )
 
-// or dispatch an async action with a Promise
-dispatch( Promise.resolve({ type: 'move', mode: 'over rails' }) )
+// With type and data
+dispatch( 'loadSettings', { a: 1, b: 2 } )
+
 ```
 
-### createStore(name, reducer, selectors)
+### createStore( name, reducerOrSpec, selectors )
 
-Define a store which respond to actions by returning the existing state or a new state object.
+A store responds to actions by returning the next state.
 
 ```js
 const inc = 'inc'
 import {createStore} from 'pure-flux';
 
 // a simple counting store
-var countStore = createStore((state=0, action) => {
-switch (action.type)
-case inc:
-  return state + 1;
-default:
-  return state;
+var store = createStore( "CountStoreWithReducer", (state=0, action) => {
+  switch (action.type)
+  case inc:
+    return state + 1;
+  case incN:
+    return state + action.data;
+  default:
+    return state;
 })
+
+// the store includes a reference to dispatch
+store.dispatch('inc')
 ```
 
-_You should not mutate the state object. It is frozen to avoid problems._
+Optionally, you may define a store with a specification.
 
-### composeStore(name, ...spec)
+```js
+const inc = 'inc'
+import { createStore } from 'pure-flux';
+
+// a simple counting store
+var countStore = createStore( "CountStoreWithSpec", {
+  getInitialState: () => 0,
+  inc: (state) => state+1,
+  incN: (state, n) => state+n,
+})
+
+// object spec auto create action methods...
+countStore.inc()
+countStore.incN(10)
+```
+
+The specification includes the life-cycle method `getInitialState` which is invoked once when the store is created.
+
+Additional functions are invoked when the `action.type` matches the key in the spec.
+
+_Do not try to mutate the state object. It is frozen._
+
+#### Store Properties
+
+| name | comment |
+|---------|------|
+| name | The name of the store |
+| dispatch | Access to dispatch function |
+| dispatchToken | A number used to identity the store |
+| subscribe | A function to tegister a listener |
+| getState | A function to access state |
+| setState | Replace the store's state |
+| replaceReducer | Replace the store's reducer |
+
+### composeStore( name, ...spec )
 
 Compose two or more stores into composite store with a specification.
 
+#### Object specification
 ```js
 // object spec
 composeStores(
   "MyCombinedObjectStore", {
     count: CountStore,
-    message: MessageStore
+    messages: MessageStore
   }
 )
 
-// list spec
-composeStores("MyCombinedListStore", CountStore, MessageStore )
+// Returns state as object:
+// {
+//   count: {CountStore.getState()},
+//   messages: {MessageStore.getState()}
+// }
 ```
 
-## Store Properties
+#### Array specification
 
-| name | comment |
-|---------|------|
-| name | The name supplied when creating the store |
-| dispatch | Access to dispatch function |
-| dispatchToken | A number used to identity each store |
-| subscribe | A function to tegister a listener |
-| getState | A function to access state |
-| setState | Replace the store's state |
-| replaceReducer | Replace the store's reducer |
+```js
+// list spec
+composeStores( "MyCombinedListStore", CountStore, MessageStore )
+
+// Returns state as array:
+// [
+//   {CountStore.getState()},
+//   {MessageStore.getState()}
+// ]
+```
+
+### getStores( )
+
+Returns an object with the name as key and store as value.
+
+## Final thought
+
+If you got this far then I hope you enjoy this library and build something amazing.
+
+If you do please let me know!

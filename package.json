@@ -1,7 +1,7 @@
 {
   "name": "pure-flux",
-  "version": "0.12.1",
-  "description": "Pure function Flux implementation",
+  "version": "1.0.0",
+  "description": "Yet Another Flux",
   "main": "./lib/index.js",
   "scripts": {
     "build": "gulp",

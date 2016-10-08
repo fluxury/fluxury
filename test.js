@@ -1,12 +1,11 @@
 var test = require('tape-async');
 var pf = require('./lib/index')
 var getStores = pf.getStores
-var getStore = pf.getStore
 var composeStore = pf.composeStore
 var createStore = pf.createStore
 var dispatch = pf.dispatch
 
-test( 'pf', function* (t) {
+test( 'Basic Tests', function* (t) {
   t.plan(19)
 
   t.equal(typeof pf, 'object')
@@ -102,7 +101,7 @@ test('CountStore', function(t) {
 
 })
 
-test('ImmutableMapStore', function(t) {
+test('ImmutableMapStoreWithObjectSpec', function(t) {
   t.plan(10)
 
   var dispatch = pf.dispatch,
@@ -111,11 +110,9 @@ test('ImmutableMapStore', function(t) {
   process.env.NODE_ENV = 'prod'
 
   // For when switch cases seem like overkill.
-  var store = pf.createStore("test3ImmutableMapStore", (state=Immutable.Map(), action) => {
-    switch(action.type) {
-      case 'set': return state.merge(action.data);
-      default: return state
-    }
+  var store = pf.createStore("test3ImmutableMapStore", {
+    getInitialState: () => Immutable.Map(),
+    set: (state, data) => state.merge(data)
   }, {
     get: (state, param) => state.get(param),
     has: (state, param) => state.has(param),
@@ -139,12 +136,13 @@ test('ImmutableMapStore', function(t) {
     'subscribe',
     'name',
     'replaceReducer',
+    'set',
     'setState',
     'dispatch',
     'getState'
   ].sort());
 
-  dispatch('set', { states: ['CA', 'OR', 'WA'] })
+  store.set({ states: ['CA', 'OR', 'WA'] })
   dispatch('set', { programs: [{ name: 'A', states: ['CA']}] })
   dispatch('set', { selectedState: 'CA' })
 
@@ -207,6 +205,7 @@ test('waitFor, compose and events works correctly', function* (t) {
 
   t.equals( typeof unsubscribe, 'function')
 
+
   dispatch('loadMessage', 'Test')
   t.equals(MessageStore.getState().length, 1)
   t.equals(MessageCountStore.getState(), 1)
@@ -246,10 +245,9 @@ test('waitFor, compose and events works correctly', function* (t) {
 })
 
 test('check root store', function(t) {
-  t.plan(7)
+  t.plan(6)
   var rootStore = composeStore("master", getStores())
   t.equal(Object.keys(rootStore.getState()).length, 9)
-  t.equal(getStore("master").name, "master")
 
   var rootStore2 = composeStore("master2", getStores())
   t.equal(Object.keys(rootStore2.getState()).length, 10)

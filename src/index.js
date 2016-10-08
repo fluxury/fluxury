@@ -79,22 +79,23 @@ export function getStores() {
   return stores
 }
 
-export function getStore(name) {
-  return stores[name]
-}
-
-export function createStore(name, reducer, selectors={}) {
+export function createStore(name, reducerOrSpec, selectors={}) {
 
   if (typeof name !== 'string') throw('Expect name to be string.')
-  if (typeof reducer !== 'function') throw('Expect reducer to be function.')
+  if (typeof reducerOrSpec !== 'function' && typeof reducerOrSpec !== 'object' ) throw('Expect reducer to be function or object spec.')
   if (typeof selectors !== 'object') throw('Expect selectors to be object.')
 
-  let currentListeners = [],
+  let isSpec = typeof reducerOrSpec === 'object',
+  reducer = isSpec ? makeReducer(reducerOrSpec) : reducerOrSpec,
+  actions = {},
+  currentListeners = [],
   nextListeners = [];
 
   updateRootState(
     name,
-    reducer(undefined, {}, () => {})
+    isSpec ?
+    (reducerOrSpec.getInitialState ? reducerOrSpec.getInitialState() : undefined)
+    : reducer(undefined, {}, () => {})
   )
 
   var dispatchToken = dispatcher.register( function(action) {
@@ -137,8 +138,22 @@ export function createStore(name, reducer, selectors={}) {
     }
   }
 
+  if (isSpec) {
+    // create helpful action methods
+    actions = Object.keys(reducerOrSpec)
+    .reduce((a, b) => {
+      if (b === 'getInitialState') return a;
+      a[b] = (data) => dispatcher.dispatch({
+        type: b,
+        data: data
+      })
+      return a;
+    }, {})
+  }
+
   var store = Object.assign(
     { },
+    actions,
     bindSelectors(name, selectors),
     {
       name,
@@ -154,7 +169,7 @@ export function createStore(name, reducer, selectors={}) {
   )
 
 
-  if (name !== '__root__') stores[name] = store;
+  if (name[0] !== '_') stores[name] = store;
 
   return store;
 
