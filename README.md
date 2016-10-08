@@ -19,7 +19,7 @@ The library includes:
 
 For working examples [read the tests](./test.js).
 
-For react bindings see [react-pure-flux](https://github.com/FunctionFoundry/react-pure-flux).
+For react bindings see [react-pure-flux](https://github.com/WebsiteHQ/react-pure-flux).
 
 ## Quick start
 
@@ -107,7 +107,7 @@ var countStore = createStore( "CountStoreWithSpec", {
   incN: (state, n) => state+n,
 })
 
-// object spec auto create action methods...
+// object spec auto created action methods...
 countStore.inc()
 countStore.incN(10)
 ```
