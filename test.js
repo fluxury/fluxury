@@ -1,9 +1,14 @@
 var test = require('tape-async');
-var pf = require('./lib/index')
+var pf = require('./src/index')
+var getState = pf.getState
 var getStores = pf.getStores
 var composeStore = pf.composeStore
 var createStore = pf.createStore
 var dispatch = pf.dispatch
+var replaceState = pf.replaceState
+var subscribe = pf.subscribe
+
+
 
 test( 'Basic Tests', function* (t) {
   t.plan(19)
@@ -245,9 +250,21 @@ test('waitFor, compose and events works correctly', function* (t) {
 })
 
 test('check root store', function(t) {
-  t.plan(6)
+
+  let rootStateCount = 0;
+  let rootStateCount2 = 0;
+
+  // don't count calls where action is undefined (e.g. createStore)
+  var rootSubscription = subscribe( (state, action) => action ? rootStateCount++ : rootStateCount )
+  // count calls
+  var rootSubscription2 = subscribe( (state, action) => rootStateCount2++ )
+
+  t.plan(15)
+
   var rootStore = composeStore("master", getStores())
+  var rootState = getState()
   t.equal(Object.keys(rootStore.getState()).length, 9)
+  t.equal(Object.keys(rootState).length, 10)
 
   var rootStore2 = composeStore("master2", getStores())
   t.equal(Object.keys(rootStore2.getState()).length, 10)
@@ -262,7 +279,7 @@ test('check root store', function(t) {
 
   var count = 0;
 
-  var rootListener = rootStore.subscribe(() => count++)
+  var rootListener = rootStore2.subscribe(() => count++)
   dispatch('no-action-here', 'Test3')
 
   t.equal(count, 0)
@@ -271,5 +288,39 @@ test('check root store', function(t) {
 
   t.equal(count, 1)
 
+  // try to modify/replace state
+  var modifiedState = Object.assign({}, rootState)
+  delete modifiedState.master
+
+  replaceState(modifiedState)
+
+  rootState = getState()
+  t.equal(Object.keys(rootState).length, Object.keys(modifiedState).length)
+
+  dispatch('no-action-here', 'Test3')
+  dispatch('no-action-here', 'Test3')
+  dispatch('no-action-here', 'Test3')
+  t.equal( rootStateCount, 2)
+  dispatch('loadMessage', 'Test3')
+  t.equal( rootStateCount, 3)
+  dispatch('loadMessage', 'Test3')
+  t.equal( rootStateCount, 4)
+
+  rootSubscription()
+
+  var last;
+  var subscribe3 = subscribe( (state, action) => { last = { state, action }} )
+
+  dispatch('loadMessage', 'Test3')
+
+  // count should not increment
+  t.equal( rootStateCount, 4)
+
+  // plus 4 call to composeStore and 1 extra dispatch
+  t.equal( rootStateCount2, 9)
+
+  // verify that state and action are passed to listener
+  t.equal(Object.keys(last.state).length, 11)
+  t.equal(last.action.type, 'loadMessage')
 
 })

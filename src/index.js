@@ -6,7 +6,9 @@ import Dispatcher from './Dispatcher';
 let rootState = Object.freeze({}),
 stores = {},
 dispatcher = new Dispatcher(),
-waitFor = dispatcher.waitFor.bind(dispatcher);
+waitFor = dispatcher.waitFor.bind(dispatcher),
+rootListeners = [],
+rootNextListeners = [];
 
 function copyIfSame(current, next) {
   if (current === next) return current.slice()
@@ -19,33 +21,85 @@ function updateRootState(name, newState) {
   rootState = Object.assign({}, rootState, changes)
 }
 
-function isPromise(object) {
-  return typeof object === 'object' && typeof object.then === 'function'
+function rootNotify(action) {
+  // notify root listeners
+  var listeners = rootListeners = rootNextListeners
+  for (var i = 0; i < listeners.length; i++) {
+    var listener = listeners[i]
+    listener(rootState, action)
+  }
+}
+
+export function subscribe(cb) {
+  if (typeof cb !== 'function') {
+    throw "Listener must be a function";
+  }
+
+  // avoid mutating list that could be iterating during dispatch
+  let subscribed = true;
+  rootNextListeners = copyIfSame(rootListeners, rootNextListeners)
+
+  rootNextListeners.push(cb)
+
+  return () => {
+    if (!subscribed) return
+    subscribed = false
+
+    rootNextListeners = copyIfSame(rootListeners, rootNextListeners)
+
+    var index = rootNextListeners.indexOf(cb)
+    rootNextListeners.splice(index, 1)
+  }
+}
+
+export function promiseAction(type, data) {
+  return Promise.resolve({ type, data })
+}
+
+export function replaceState(newState) {
+  rootState = newState
 }
 
 export function dispatch(action, data) {
   try {
 
-    if (isPromise(action)) {
+    if (typeof action === 'object' && typeof action.then === 'function') {
       return action
       .then(result => {
         dispatch(result)
         return Promise.resolve(result)
       })
     } else if (typeof action === 'object') {
-      dispatcher.dispatch(action)
-      return Promise.resolve(action)
+
     } else if (typeof action === 'string') {
-      dispatcher.dispatch({ type: action, data: data })
-      return Promise.resolve({ type: action, data: data })
+      action = { type: action, data: data };
     } else {
       return Promise.reject('Invalid action!')
     }
 
+    // keep a reference to current rootState
+    let currentState = rootState
+
+    // dispatch the action to the stores
+    dispatcher.dispatch(action)
+
+    // notify if root state changes!
+    if (currentState !== rootState) {
+      rootNotify(action)
+    }
+
+    // Return a promise that resolves to the action.
+    return Promise.resolve(action)
 
   } catch(e) {
     return Promise.reject(e)
   }
+}
+
+function toPromise(type, ...data) {
+  return data.length === 1 ?
+  Promise.resolve({ type, data: data[0] }) :
+  Promise.resolve({ type, data })
 }
 
 // construct a reducer method with a spec
@@ -75,6 +129,10 @@ function bindSelectors(name, selectors) {
   }, {} )
 }
 
+export function getState() {
+  return rootState
+}
+
 export function getStores() {
   return stores
 }
@@ -98,6 +156,8 @@ export function createStore(name, reducerOrSpec, selectors={}) {
     : reducer(undefined, {}, () => {})
   )
 
+  rootNotify(undefined)
+
   var dispatchToken = dispatcher.register( function(action) {
     var newState = reducer(rootState[name], action, waitFor);
     if (rootState[name] !== newState) {
@@ -111,7 +171,7 @@ export function createStore(name, reducerOrSpec, selectors={}) {
       var listeners = currentListeners = nextListeners
       for (var i = 0; i < listeners.length; i++) {
         var listener = listeners[i]
-        listener(action)
+        listener(newState, action)
       }
     }
   })

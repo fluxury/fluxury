@@ -1,11 +1,11 @@
 {
   "name": "pure-flux",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Yet Another Flux",
   "main": "./lib/index.js",
   "scripts": {
     "build": "gulp",
-    "test": "node test"
+    "test": "babel-node test"
   },
   "engines": {
     "node": ">=6.0"
@@ -21,9 +21,7 @@
     "gulp-babel": "^6.1.2",
     "immutable": "^3.7.5",
     "tape": "^4.2.2",
-    "tape-async": "^2.1.1",
-    "uglifyify": "^3.0.1",
-    "webpack": "^1.12.9"
+    "tape-async": "^2.1.1"
   },
   "repository": {
     "type": "git",

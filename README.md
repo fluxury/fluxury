@@ -4,22 +4,28 @@
 
 ## Overview
 
-A Flux library that promotes `(state, action) => state`.
+A Flux library that promotes `(state, action) => state`. It is a state management library composed of immutable stores.
 
 It forks [Facebook's Flux](https://facebook.github.io/flux/) v2.0.2 adding functions to define stores, manage state and register listeners.
 
-There is no debate. It is Flux architecture with the original dispatcher hidden behind the curtains.
+There is no debate. It is Flux architecture with the original dispatcher behind the curtains.
 
 The library includes:
 
-  - createStore( name, reducerOrSpec, selectors )
+  - createStore( name, reducerOrSpec, actionsOrSelectors )
   - composeStore( name, ...spec )
   - dispatch( action )
   - getStores( )
-
-For working examples [read the tests](./test.js).
+  - getState( )
+  - promiseAction( type, data )
+  - replaceState( state )
+  - subscribe( cb )
 
 For react bindings see [react-pure-flux](https://github.com/WebsiteHQ/react-pure-flux).
+
+A complete router for React can be found at [pure-flux-router](https://github.com/WebsiteHQ/pure-flux-router)
+
+For working examples [read the tests](./test.js).
 
 ## Quick start
 
@@ -32,7 +38,11 @@ import {
   createStore,
   composeStore,
   dispatch,
-  getStores
+  getStores,
+  getState,
+  promiseAction,
+  replaceState,
+  subscribe
 }
 from 'pure-flux'
 ```
@@ -71,7 +81,7 @@ dispatch( 'loadSettings', { a: 1, b: 2 } )
 
 ```
 
-### createStore( name, reducerOrSpec, selectors )
+### createStore( name, reducerOrSpec, actionsOrSelectors )
 
 A store responds to actions by returning the next state.
 
@@ -88,10 +98,16 @@ var store = createStore( "CountStoreWithReducer", (state=0, action) => {
     return state + action.data;
   default:
     return state;
+}, {
+  inc: (state) => dispatch('inc'),
+  incN: (state, count) => dispatch('incN', count),
 })
 
 // the store includes a reference to dispatch
 store.dispatch('inc')
+
+// optionally, define action creators into the store.
+store.inc()
 ```
 
 Optionally, you may define a store with a specification.
@@ -107,7 +123,7 @@ var countStore = createStore( "CountStoreWithSpec", {
   incN: (state, n) => state+n,
 })
 
-// object spec auto created action methods...
+// object spec makes action creators automatically...
 countStore.inc()
 countStore.incN(10)
 ```
@@ -167,6 +183,31 @@ composeStores( "MyCombinedListStore", CountStore, MessageStore )
 ### getStores( )
 
 Returns an object with the name as key and store as value.
+
+### replaceState( state )
+
+Rehydrate the root state.
+
+```js
+replaceState({
+  'MyCountStore': 1
+})
+```
+
+### subscribe( listener )
+
+Listen to changes to all stores. This will trigger once each time createStore or dispatch is invoked.
+
+_Please note that action will be undefined when createStore is invoked._
+
+```
+var unsubscribe = subscribe( (state, action) => {
+  // got change
+})
+
+// stop listening
+unsubscribe()
+```
 
 ## Final thought
 
