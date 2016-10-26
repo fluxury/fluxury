@@ -203,7 +203,7 @@ export function createStore(name, reducerOrSpec, selectors={}) {
     actions = Object.keys(reducerOrSpec)
     .reduce((a, b) => {
       if (b === 'getInitialState') return a;
-      a[b] = (data) => dispatcher.dispatch({
+      a[b] = (data) => dispatch({
         type: b,
         data: data
       })
