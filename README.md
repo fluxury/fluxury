@@ -4,13 +4,9 @@
 
 ## Overview
 
-A Flux library that promotes `(state, action) => state`. It is a state management library composed of immutable stores.
+A Flux library that promotes that `(state, action) => state` pattern.
 
-It forks [Facebook's Flux](https://facebook.github.io/flux/) v2.0.2 adding functions to define stores, manage state and register listeners.
-
-There is no debate. It is Flux architecture with the original dispatcher behind the curtains.
-
-The library includes:
+This library includes:
 
   - createStore( name, reducerOrSpec, actionsOrSelectors )
   - composeStore( name, ...spec )
@@ -22,10 +18,6 @@ The library includes:
   - subscribe( cb )
 
 For react bindings see [react-pure-flux](https://github.com/WebsiteHQ/react-pure-flux).
-
-A complete router for React can be found at [pure-flux-router](https://github.com/WebsiteHQ/pure-flux-router)
-
-For working examples [read the tests](./test.js).
 
 ## Quick start
 
