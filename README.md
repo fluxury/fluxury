@@ -1,6 +1,6 @@
 # pure-flux
 
-[![Circle CI](https://circleci.com/gh/WebsiteHQ/pure-flux/tree/master.svg?style=svg)](https://circleci.com/gh/WebsiteHQ/pure-flux/tree/master)
+[![Circle CI](https://circleci.com/gh/PureFlux/pure-flux/tree/master.svg?style=svg)](https://circleci.com/gh/PureFlux/pure-flux/tree/master)
 
 ## Overview
 
