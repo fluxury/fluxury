@@ -81,7 +81,7 @@ test( 'Basic Tests', function* (t) {
   pf.dispatch(dec)
   t.equal(store.getState(), 0)
 
-  t.deepEqual( Object.keys(store).sort(),  [ 'dispatch', 'dispatchToken', 'getState', 'name', 'replaceReducer', 'setState', 'subscribe' ].sort() );
+  t.deepEqual( Object.keys(store).sort(),  [ 'dispatch', 'dispatchToken', 'getReducer', 'getState', 'name', 'replaceReducer', 'setState', 'subscribe' ].sort() );
 
 
 })
@@ -96,13 +96,17 @@ test('CountStore', function(t) {
     }
   })
 
-  t.plan(3)
+  t.plan(4)
 
   t.equals(MessageCountStore.getState(), 0)
   MessageCountStore.dispatch('receiveMessage', 'Hello')
   t.equals(MessageCountStore.getState(), 1)
   MessageCountStore.dispatch('receiveMessage', 'Hello')
   t.equals(MessageCountStore.getState(), 2)
+
+  // Test the reducer independently
+  let reducer = MessageCountStore.getReducer();
+  t.equals( reducer( 1, { type: 'receiveMessage' } ), 2 )
 
 })
 
@@ -144,7 +148,8 @@ test('ImmutableMapStoreWithObjectSpec', function(t) {
     'set',
     'setState',
     'dispatch',
-    'getState'
+    'getState',
+    'getReducer'
   ].sort());
 
   store.set({ states: ['CA', 'OR', 'WA'] })

@@ -222,6 +222,7 @@ export function createStore(name, reducerOrSpec, selectors={}) {
       subscribe,
       replaceReducer: (newReducer) => reducer = newReducer,
       setState: (state) => { updateRootState(name, state) },
+      getReducer: () => reducer,
       getState: function() {
         return rootState[name];
       }

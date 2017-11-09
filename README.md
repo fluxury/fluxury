@@ -12,6 +12,7 @@ This library includes:
   - composeStore( name, ...spec )
   - dispatch( action )
   - getStores( )
+  - getReducer( )
   - getState( )
   - promiseAction( type, data )
   - replaceState( state )
@@ -56,13 +57,13 @@ require('core-js/fn/object/keys');
 
 ### dispatch( action )
 
-Dispatch action, returns a Promise which may be used to chain actions together.
+Dispatch action, return promise.
 
 ```js
 var { dispatch } = require( 'pure-flux' )
 
 // With an object
-dispatch( { type: 'move', data: 'off the rails' } )
+dispatch( { type: 'openPath', '/user/new' } )
 .then( action => console.log('Going', action.data) )
 
 // With a Promise
@@ -200,6 +201,9 @@ var unsubscribe = subscribe( (state, action) => {
 // stop listening
 unsubscribe()
 ```
+### getReducer( )
+
+Return the reducer function, use with Redux.
 
 ## Final thought
 
