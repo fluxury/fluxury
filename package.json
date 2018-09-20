@@ -1,6 +1,6 @@
 {
   "name": "fluxury",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "state management in js",
   "main": "./lib/index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jcfisher007/fluxury.git"
+    "url": "git+https://github.com/fluxury/fluxury.git"
   },
   "keywords": [
     "react",
@@ -31,7 +31,7 @@
     "flux"
   ],
   "bugs": {
-    "url": "https://github.com/jcfisher007/fluxury/issues"
+    "url": "https://github.com/fluxury/fluxury/issues"
   },
-  "homepage": "https://github.com/jcfisher007/fluxury#readme"
+  "homepage": "https://github.com/fluxury/fluxury#readme"
 }
